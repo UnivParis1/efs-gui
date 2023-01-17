@@ -21,6 +21,7 @@ import axios from "axios";
 import ColorScheme from "color-scheme"
 import ReactWordcloud from "react-wordcloud";
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import env from "react-dotenv";
 
 export function Home() {
     const theme = useTheme();
@@ -50,7 +51,7 @@ export function Home() {
     useEffect(() => {
         const fetchData = () => {
 
-            axios.post('http://localhost:3000/search', {sentence: sentence, precision: precision})
+            axios.post(`${env.API_URL}/search`, {sentence: sentence, precision: precision})
                 .then(response => {
                     setResult(() => {
                         return response.data.map((result) => {
