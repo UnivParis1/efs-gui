@@ -128,7 +128,7 @@ export function Home() {
                                 id="outlined-multiline-static"
                                 label={<div>
                                     <Typography variant="caption">
-                                        Ex. L'animal dans les rites funéraires à l'âge de fer; Corporate governance and Corporate Social Responsibility.
+                                        Ex. L'animal dans les rites funéraires à l'âge du fer; Corporate governance and Corporate Social Responsibility.
                                     </Typography>
                                 </div>}
                                 multiline
@@ -146,9 +146,8 @@ export function Home() {
                                                 my={theme.spacing(3)}
                                                 title={
                                                     <React.Fragment>
-                                                        <Typography color="inherit">Seuil de recherche /
-                                                            sélectivité</Typography>
-                                                        <p>Plus le seuil est élevé, plus grande sera la distance
+                                                        <Typography color="inherit">Extension sémantique</Typography>
+                                                        <p>Plus ce paramètre est élevé, plus grande sera la distance
                                                             sémantique de recherche autour de l'énoncé que vous avez
                                                             soumis.</p>
                                                         <ul>
@@ -158,7 +157,7 @@ export function Home() {
                                                             </li>
                                                             <li>Un seuil élevé permet au contraire de détecter des
                                                                 auteurs ayant écrit <em>un grand nombre de textes</em>
-                                                                &nbsp;<b>vaguement en rapport avec votre sujet</b>.
+                                                                &nbsp;<b>plus ou moins en rapport avec votre sujet</b>.
                                                             </li>
                                                         </ul>
                                                     </React.Fragment>
@@ -171,6 +170,9 @@ export function Home() {
 
                                         </Grid>
                                         <Grid item md={10}>
+                                            <Typography id="input-slider" gutterBottom>
+                                                Extension sémantique
+                                            </Typography>
                                             <Slider
                                                 aria-label="Précision"
                                                 value={precision}
