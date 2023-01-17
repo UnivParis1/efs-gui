@@ -18,6 +18,7 @@ import {
     useTheme
 } from "@mui/material";
 import axios from "axios";
+import ColorScheme from "color-scheme"
 import ReactWordcloud from "react-wordcloud";
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
@@ -30,6 +31,9 @@ export function Home() {
     const [precision, setPrecision] = useState(2.0);
     const [name, setName] = useState('');
     const [score, setScore] = useState(0);
+    const [colors, setColors] = useState([]);
+
+    const randomColor = useCallback(() => colors[Math.floor(Math.random() * colors.length)], [colors])
 
     const HtmlTooltip = styled(({className, ...props}) => (
         <Tooltip {...props} classes={{popper: className}}/>
@@ -50,7 +54,12 @@ export function Home() {
                 .then(response => {
                     setResult(() => {
                         return response.data.map((result) => {
-                            return {"text": result.name, "value": result.score, "sentences": result.texts}
+                            return {
+                                "text": result.name,
+                                "value": result.score,
+                                "sentences": result.texts,
+                                color: randomColor()
+                            }
                         })
                     });
                     setSubmit(false)
@@ -62,7 +71,15 @@ export function Home() {
             setName("")
             fetchData();
         }
-    }, [submit, sentence, precision])
+    }, [submit, sentence, precision, randomColor])
+
+    useEffect(() => {
+        const scheme = new ColorScheme();
+        scheme.from_hue(21)
+            .scheme('triade')
+            .variation('soft');
+        setColors(scheme.colors());
+    }, [])
 
 
     const sentencePanel = useMemo(() => {
@@ -86,13 +103,17 @@ export function Home() {
         return {
             onWordClick: wordClick,
             getWordTooltip: word => `Score : ${word.value}`,
+            getWordColor: word => {
+                return word.text === name ? "black" : `#${word.color}`;
+            },
         }
-    }, [wordClick])
+    }, [wordClick, name])
 
     const cloud = useMemo(() => {
         return <ReactWordcloud
             words={result}
             callbacks={callbacks}
+            options={{"deterministic": true}}
         />
     }, [result, callbacks])
 
@@ -128,7 +149,8 @@ export function Home() {
                                 id="outlined-multiline-static"
                                 label={<div>
                                     <Typography variant="caption">
-                                        Ex. L'animal dans les rites funéraires à l'âge du fer; Corporate governance and Corporate Social Responsibility.
+                                        Ex. L'animal dans les rites funéraires à l'âge du fer; Corporate governance and
+                                        Corporate Social Responsibility.
                                     </Typography>
                                 </div>}
                                 multiline
@@ -152,7 +174,8 @@ export function Home() {
                                                             soumis.</p>
                                                         <ul>
                                                             <li>Un seuil faible favorise la découverte d'auteurs ayant
-                                                                produit <em>de rares énoncés</em>&nbsp;<b>très proches de
+                                                                produit <em>de rares énoncés</em>&nbsp;<b>très proches
+                                                                    de
                                                                     votre sujet</b>.
                                                             </li>
                                                             <li>Un seuil élevé permet au contraire de détecter des
