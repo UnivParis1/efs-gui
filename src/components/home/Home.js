@@ -244,7 +244,10 @@ export function Home() {
                                                 marks
                                                 min={1}
                                                 max={4}
-                                                onChange={(e) => setPrecision(e.target.value)}
+                                                onChange={(e) => {
+                                                    setValidationEnabled(true)
+                                                    setPrecision(e.target.value);
+                                                }}
                                             /></Grid>
 
                                     </Grid>
