@@ -2,6 +2,7 @@ import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
     Box,
     Button,
+    Chip,
     Divider,
     Grid,
     IconButton,
@@ -10,7 +11,9 @@ import {
     ListItem,
     ListItemText,
     Slider,
+    Stack,
     styled,
+    Switch,
     TextField,
     Tooltip,
     tooltipClasses,
@@ -19,6 +22,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import ColorScheme from "color-scheme"
+import isStringBlank from "is-string-blank"
 import ReactWordcloud from "react-wordcloud";
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import env from "react-dotenv";
@@ -33,6 +37,8 @@ export function Home() {
     const [name, setName] = useState('');
     const [score, setScore] = useState(0);
     const [colors, setColors] = useState([]);
+    const [adaModel, setAdaModel] = useState(false);
+    const [validationEnabled, setValidationEnabled] = useState(true);
 
     const randomColor = useCallback(() => colors[Math.floor(Math.random() * colors.length)], [colors])
 
@@ -50,8 +56,12 @@ export function Home() {
 
     useEffect(() => {
         const fetchData = () => {
-
-            axios.post(`${env.API_URL}/search`, {sentence: sentence, precision: precision})
+            setValidationEnabled(false)
+            axios.post(`${env.API_URL}/search`, {
+                sentence: sentence,
+                precision: precision,
+                model: adaModel ? 'ada' : 'sbert'
+            })
                 .then(response => {
                     setResult(() => {
                         return response.data.map((result) => {
@@ -72,7 +82,7 @@ export function Home() {
             setName("")
             fetchData();
         }
-    }, [submit, sentence, precision, randomColor])
+    }, [submit, sentence, precision, randomColor, adaModel])
 
     useEffect(() => {
         const scheme = new ColorScheme();
@@ -81,6 +91,10 @@ export function Home() {
             .variation('soft');
         setColors(scheme.colors());
     }, [])
+
+    useEffect(() => {
+        setValidationEnabled(!adaModel && sentence && !isStringBlank(sentence))
+    }, [adaModel, sentence])
 
 
     const sentencePanel = useMemo(() => {
@@ -142,10 +156,32 @@ export function Home() {
                             component="form"
                             noValidate
                             autoComplete="off"
-                        >
-                            <label>Veuillez saisir une phrase (sujet, projet de recherche ou
-                                d'article...) dans la langue de votre choix. La casse du texte est prise en
-                                compte.</label>
+                        ><Grid container direction="row">
+                            <Grid item md={6}>
+                                <label>Veuillez saisir une phrase (sujet, projet de recherche ou
+                                    d'article...) dans la langue de votre choix. La casse du texte est prise en
+                                    compte.</label>
+                            </Grid>
+
+                            <Grid item md={6} textAlign="end">
+                                <Stack direction="row" spacing={1} justifyContent="end">
+                                    <Typography>Bert</Typography>
+                                    <Switch checked={adaModel} inputProps={{'aria-label': 'Choose adaModel'}}
+                                            onChange={() => setAdaModel(!adaModel)}/>
+                                    <Typography>OpenAI</Typography>
+                                </Stack>
+                                <Stack direction="column" spacing={1} textAlign="center">
+                                    {adaModel &&
+                                        <Typography>Ce modèle de langage n'est pas disponible actuellement
+                                            :</Typography>}
+                                    {!adaModel && <Typography>Vous utilisez le modèle de langage :</Typography>}
+                                    {adaModel && <Chip label="OpenAI / text-embedding-ada-002"
+                                                       variant="filled"/>}
+                                    {!adaModel && <Chip label="SentenceBert / paraphrase-multilingual-mpnet-base-v2"
+                                                        variant="outlined"/>}
+                                </Stack>
+                            </Grid>
+                        </Grid>
                             <TextField
                                 id="outlined-multiline-static"
                                 label={<div>
@@ -157,7 +193,10 @@ export function Home() {
                                 multiline
                                 rows={4}
                                 value={sentence}
-                                onChange={e => setSentence(e.target.value)}
+                                onChange={e => {
+                                    setValidationEnabled(true)
+                                    setSentence(e.target.value);
+                                }}
                                 fullWidth
                                 sx={{my: theme.spacing(3)}}
                             />
@@ -210,7 +249,7 @@ export function Home() {
 
                                     </Grid>
                                 </Grid>
-                                <Grid item md={2}><Button onClick={() => setSubmit(true)}
+                                <Grid item md={2}><Button onClick={() => setSubmit(true)} disabled={!validationEnabled}
                                                           variant="outlined">Valider</Button></Grid>
                                 <Grid item md={4}
                                       sx={{visibility: submit ? "visible" : "hidden"}}><LinearProgress/></Grid>
