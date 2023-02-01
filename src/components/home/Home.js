@@ -1,15 +1,9 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
     Box,
-    Button,
-    Chip,
     Divider,
     Grid,
     IconButton,
-    LinearProgress,
-    List,
-    ListItem,
-    ListItemText,
     Slider,
     Stack,
     styled,
@@ -26,18 +20,22 @@ import isStringBlank from "is-string-blank"
 import ReactWordcloud from "react-wordcloud";
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import env from "react-dotenv";
+import PublicationsAccordions from "./PublicationsAccordion";
+import {LoadingButton} from "@mui/lab";
 
 export function Home() {
     const theme = useTheme();
     const [sentence, setSentence] = useState('');
     const [submit, setSubmit] = useState(false);
     const [result, setResult] = useState([]);
-    const [sentences, setSentences] = useState([]);
+    const [filteredResult, setFilteredResult] = useState([]);
+    const [publications, setPublications] = useState([]);
     const [precision, setPrecision] = useState(2.0);
     const [name, setName] = useState('');
     const [score, setScore] = useState(0);
     const [colors, setColors] = useState([]);
     const [adaModel, setAdaModel] = useState(false);
+    const [includeCoAuthors, setIncludeCoAuthors] = useState(false);
     const [validationEnabled, setValidationEnabled] = useState(true);
 
     const randomColor = useCallback(() => colors[Math.floor(Math.random() * colors.length)], [colors])
@@ -64,11 +62,12 @@ export function Home() {
             })
                 .then(response => {
                     setResult(() => {
-                        return response.data.map((result) => {
+                        return Object.values(response.data).map((result) => {
                             return {
                                 "text": result.name,
                                 "value": result.score,
-                                "sentences": result.texts,
+                                "pubs": result.pubs,
+                                "own_inst": result.own_inst,
                                 color: randomColor()
                             }
                         })
@@ -78,11 +77,20 @@ export function Home() {
 
         };
         if (submit) {
-            setSentences([])
+            setPublications([])
             setName("")
             fetchData();
         }
     }, [submit, sentence, precision, randomColor, adaModel])
+
+    useEffect(() => {
+        if (includeCoAuthors) {
+            setFilteredResult(result);
+
+        } else {
+            setFilteredResult(result.filter((e) => e.own_inst === "True"))
+        }
+    }, [result, includeCoAuthors])
 
     useEffect(() => {
         const scheme = new ColorScheme();
@@ -98,18 +106,11 @@ export function Home() {
 
 
     const sentencePanel = useMemo(() => {
-        return sentences.map((sentence) => {
-            return <>
-                <ListItem key={Math.random()}>
-                    <ListItemText primary={sentence}/>
-                </ListItem>
-                <Divider/>
-            </>
-        })
-    }, [sentences])
+        return publications ? <PublicationsAccordions publications={publications} preferredLanguage={'fr'}/> : ""
+    }, [publications])
 
     const wordClick = useCallback(word => {
-        setSentences(word.sentences);
+        setPublications(word.pubs);
         setName(word.text);
         setScore(word.value);
     }, [])
@@ -126,11 +127,11 @@ export function Home() {
 
     const cloud = useMemo(() => {
         return <ReactWordcloud
-            words={result}
+            words={filteredResult}
             callbacks={callbacks}
             options={{"deterministic": true}}
         />
-    }, [result, callbacks])
+    }, [filteredResult, callbacks])
 
     return (<Grid container spacing={24}>
             <Grid item md={3}></Grid>
@@ -165,20 +166,10 @@ export function Home() {
 
                             <Grid item md={6} textAlign="end">
                                 <Stack direction="row" spacing={1} justifyContent="end">
-                                    <Typography>Bert</Typography>
+                                    <Typography>S-Bert</Typography>
                                     <Switch checked={adaModel} inputProps={{'aria-label': 'Choose adaModel'}}
                                             onChange={() => setAdaModel(!adaModel)}/>
-                                    <Typography>OpenAI</Typography>
-                                </Stack>
-                                <Stack direction="column" spacing={1} textAlign="center">
-                                    {adaModel &&
-                                        <Typography>Ce modèle de langage n'est pas disponible actuellement
-                                            :</Typography>}
-                                    {!adaModel && <Typography>Vous utilisez le modèle de langage :</Typography>}
-                                    {adaModel && <Chip label="OpenAI / text-embedding-ada-002"
-                                                       variant="filled"/>}
-                                    {!adaModel && <Chip label="SentenceBert / paraphrase-multilingual-mpnet-base-v2"
-                                                        variant="outlined"/>}
+                                    <Typography>GPT-3</Typography>
                                 </Stack>
                             </Grid>
                         </Grid>
@@ -201,65 +192,85 @@ export function Home() {
                                 sx={{my: theme.spacing(3)}}
                             />
                             <Grid container direction="row" spacing={theme.spacing(2)}>
-                                <Grid item md={5}>
-                                    <Grid container direction="row" spacing={theme.spacing(2)}>
-                                        <Grid item md={2}>
-                                            <HtmlTooltip
-                                                my={theme.spacing(3)}
-                                                title={
-                                                    <React.Fragment>
-                                                        <Typography color="inherit">Extension sémantique</Typography>
-                                                        <p>Plus ce paramètre est élevé, plus grande sera la distance
-                                                            sémantique de recherche autour de l'énoncé que vous avez
-                                                            soumis.</p>
-                                                        <ul>
-                                                            <li>Un seuil faible favorise la découverte d'auteurs ayant
-                                                                produit <em>de rares énoncés</em>&nbsp;<b>très proches
-                                                                    de
-                                                                    votre sujet</b>.
-                                                            </li>
-                                                            <li>Un seuil élevé permet au contraire de détecter des
-                                                                auteurs ayant écrit <em>un grand nombre de textes</em>
-                                                                &nbsp;<b>plus ou moins en rapport avec votre sujet</b>.
-                                                            </li>
-                                                        </ul>
-                                                    </React.Fragment>
+                                <Grid item md={4}>
+                                    <Stack direction="row" alignItems="center" sx={{alignContent: "center"}}>
+                                        <HtmlTooltip
+                                            my={theme.spacing(3)}
+                                            title={
+                                                <>
+                                                    <Typography color="inherit">Précision</Typography>
+                                                    <p>Plus ce paramètre est élevé, plus grande sera la distance
+                                                        sémantique de recherche autour de l'énoncé que vous avez
+                                                        soumis.</p>
+                                                    <ul>
+                                                        <li>Un seuil faible favorise la découverte d'auteurs ayant
+                                                            produit <em>de rares énoncés</em>&nbsp;<b>très proches
+                                                                de
+                                                                votre sujet</b>.
+                                                        </li>
+                                                        <li>Un seuil élevé permet au contraire de détecter des
+                                                            auteurs ayant écrit <em>un grand nombre de textes</em>
+                                                            &nbsp;<b>plus ou moins en rapport avec votre sujet</b>.
+                                                        </li>
+                                                    </ul>
+                                                </>
+                                            }
+                                        >
+                                            <IconButton>
+                                                <HelpOutlineIcon/>
+                                            </IconButton>
+                                        </HtmlTooltip>
+                                        <Typography id="input-slider" mr={2} ml={0}>
+                                            Extension
+                                        </Typography>
+                                        <Slider
+                                            aria-label="Extension"
+                                            value={precision}
+                                            valueLabelDisplay="auto"
+                                            valueLabelFormat={(value) => {
+                                                const steps = new Map(Object.entries({
+                                                    0.2: "Très précis",
+                                                    0.3: "Précis",
+                                                    0.4: "Approximatif",
+                                                    0.5: "Très approximatif",
+                                                    1: "Aleatoire",
+                                                }))
+                                                let minKey = 10;
+                                                let selectedLabel;
+                                                for (const [key, label] of steps) {
+                                                    if (value < key && key < minKey) {
+                                                        selectedLabel = label;
+                                                        minKey = key;
+                                                    }
                                                 }
-                                            >
-                                                <IconButton>
-                                                    <HelpOutlineIcon/>
-                                                </IconButton>
-                                            </HtmlTooltip>
+                                                return selectedLabel;
+                                            }}
+                                            step={0.1}
+                                            min={0.1}
+                                            max={0.7}
+                                            onChange={(e) => {
+                                                setValidationEnabled(true)
+                                                setPrecision(e.target.value);
+                                            }}
+                                        />
 
-                                        </Grid>
-                                        <Grid item md={10}>
-                                            <Typography id="input-slider" gutterBottom>
-                                                Extension sémantique
-                                            </Typography>
-                                            <Slider
-                                                aria-label="Précision"
-                                                value={precision}
-                                                valueLabelDisplay="auto"
-                                                step={0.1}
-                                                marks
-                                                min={1}
-                                                max={4}
-                                                onChange={(e) => {
-                                                    setValidationEnabled(true)
-                                                    setPrecision(e.target.value);
-                                                }}
-                                            /></Grid>
-
-                                    </Grid>
+                                    </Stack>
                                 </Grid>
-                                <Grid item md={2}><Button onClick={() => setSubmit(true)} disabled={!validationEnabled}
-                                                          variant="outlined">Valider</Button></Grid>
-                                <Grid item md={4}
-                                      sx={{visibility: submit ? "visible" : "hidden"}}><LinearProgress/></Grid>
+                                <Grid item md={2}><LoadingButton onClick={() => setSubmit(true)} loading={submit}
+                                                                 disabled={!validationEnabled}
+                                                                 variant="outlined">Valider</LoadingButton></Grid>
+                                <Grid item md={6}><Stack direction="row">
+                                    <Typography>Limiter aux unités de recherche de Paris 1
+                                        Panthéon-Sorbonne</Typography>
+                                    <Switch checked={includeCoAuthors}
+                                            inputProps={{'aria-label': 'Limit to Paris 1 Pantheon-Sorbonne authors'}}
+                                            onChange={() => setIncludeCoAuthors(!includeCoAuthors)}/>
+                                    <Typography>Inclure les coauteurs</Typography>
+                                </Stack></Grid>
 
                             </Grid>
-                            <Grid container direction="column" spacing={theme.spacing(2)}>
-                                <Grid item md={12}>
+                            <Grid container direction="column">
+                                <Grid item md={12} sx={{opacity: submit ? 0.3 : 1}}>
                                     {cloud}
                                 </Grid>
                                 {name &&
@@ -276,13 +287,12 @@ export function Home() {
                                         </Grid>
                                         <Typography color="text.secondary" variant="body2">
                                             Le degré d'expertise présumé de cet auteur vis à vis de votre requête a été
-                                            inféré à partir des titres ou extraits de résumés d'articles ci-dessous :
+                                            inféré à partir des titres ou résumés de publications ci-dessous :
                                         </Typography>
                                     </Grid>}
-                                <Grid item md={12}>
-                                    <List aria-label="texts pieces">
-                                        {sentencePanel}
-                                    </List></Grid>
+                                <Grid item md={12} sx={{padding: 0}}>
+                                    {sentencePanel}
+                                </Grid>
                             </Grid>
                         </Box>
                     </Grid>
