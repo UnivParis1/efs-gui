@@ -1,10 +1,14 @@
 {
-    "home.subtitle": "AI Powered expert finder system",
+    "home.title": "AI Powered expert finder system",
     "form.help": "Please enter a sentence (subject, research or article project...) in the language of your choice. The text is case sensitive.",
     "form.aria.choose-model": "Choose your language model, Bert or GPT-3",
     "form.aria.placeholder": "Ex. The animal in the funeral rites of the Iron Age; Corporate governance and Corporate Social Responsibility.",
     "form.tooltip.extension.title": "Semantic extension",
     "form.tooltip.extension.description": "The higher this parameter is, the greater the semantic search distance around the statement you submitted.",
     "form.tooltip.extension.li1": "Choose a low extension if you want the search to be precise: it will favor the discovery of authors who have produced rare statements very close to your subject.",
-    "form.tooltip.extension.li2": "A high threshold allows you to detect authors who have written a large number of texts more or less related to your subject."
+    "form.tooltip.extension.li2": "A high threshold allows you to detect authors who have written a large number of texts more or less related to your subject.",
+    "home.subtitle": "AI Powered expert finder system",
+    "form.help.coauthors.exclude": "Limit to the research units of Paris 1 Panthéon-Sorbonne",
+    "form.help.coauthors.include": "Include co-authors",
+    "result.help.scoring": "The presumed degree of expertise of this author with respect to your query has been inferred from the titles or abstracts of the publications below:"
 }
