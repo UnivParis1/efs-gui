@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
-    Box, Container,
+    Box,
+    Container,
     Grid,
     IconButton,
     Slider,
@@ -14,7 +15,6 @@ import {
     useTheme
 } from "@mui/material";
 import axios from "axios";
-import ColorScheme from "color-scheme"
 import isStringBlank from "is-string-blank"
 import ReactWordcloud from "react-wordcloud";
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
@@ -25,6 +25,8 @@ import {FormattedMessage, useIntl} from "react-intl";
 import LangSwitcher from "../commons/LangSwitcher";
 import P1Logo from "./P1Logo";
 import StyledSwitch from "../commons/StyledSwitch";
+
+const COLORS = ["c89108", "927b4b", "6b6760", "46546C", "00326e", "e55302", "9f5740", "765458", "394a59", "00326e"];
 
 
 export function Home() {
@@ -37,13 +39,12 @@ export function Home() {
     const [publications, setPublications] = useState([]);
     const [precision, setPrecision] = useState(2.0);
     const [name, setName] = useState('');
-    const [score, setScore] = useState(0);
-    const [colors, setColors] = useState([]);
+    const [color, setColor] = useState("000000");
     const [adaModel, setAdaModel] = useState(false);
     const [includeCoAuthors, setIncludeCoAuthors] = useState(false);
     const [validationEnabled, setValidationEnabled] = useState(true);
 
-    const randomColor = useCallback(() => colors[Math.floor(Math.random() * colors.length)], [colors])
+    const randomColor = useCallback(() => COLORS[Math.floor(Math.random() * COLORS.length)], [])
 
     const HtmlTooltip = styled(({className, ...props}) => (
         <Tooltip {...props} classes={{popper: className}}/>
@@ -98,14 +99,6 @@ export function Home() {
     }, [result, includeCoAuthors])
 
     useEffect(() => {
-        const scheme = new ColorScheme();
-        scheme.from_hue(21)
-            .scheme('triade')
-            .variation('soft');
-        setColors(scheme.colors());
-    }, [])
-
-    useEffect(() => {
         setValidationEnabled(!adaModel && sentence && !isStringBlank(sentence))
     }, [adaModel, sentence])
 
@@ -117,13 +110,12 @@ export function Home() {
     const wordClick = useCallback(word => {
         setPublications(word.pubs);
         setName(word.text);
-        setScore(word.value);
+        setColor(word.color);
     }, [])
 
     const callbacks = useMemo(() => {
         return {
             onWordClick: wordClick,
-            getWordTooltip: word => `Score : ${word.value}`,
             getWordColor: word => {
                 return word.text === name ? "black" : `#${word.color}`;
             },
@@ -134,7 +126,7 @@ export function Home() {
         return <ReactWordcloud
             words={filteredResult}
             callbacks={callbacks}
-            options={{"deterministic": true}}
+            options={{"deterministic": true, "rotations": 50, "transitionDuration": 500, "enableTooltip": false}}
         />
     }, [filteredResult, callbacks])
 
@@ -142,7 +134,7 @@ export function Home() {
         <Grid container spacing={0}>
             <Grid item md={12} bgcolor={theme.palette.secondary.dark}>
                 <Container maxWidth="md">
-                    <Grid container direction="row" alignItems="center" >
+                    <Grid container direction="row" alignItems="center">
                         <Grid item md={6} xs={5}><Typography component="h1" variant="h3"
                                                              sx={{
                                                                  margin: {md: 1, xs: 1},
@@ -292,13 +284,8 @@ export function Home() {
                     {name &&
                         <Grid container sx={{mt: theme.spacing(4)}}>
                             <Grid item xs>
-                                <Typography variant="h5" component="div">
+                                <Typography variant="h5" sx={{color: `#${color}`}} component="div">
                                     {name}
-                                </Typography>
-                            </Grid>
-                            <Grid item>
-                                <Typography gutterBottom variant="h6" component="div">
-                                    {score}
                                 </Typography>
                             </Grid>
                             <Typography color="text.secondary" variant="body2">
