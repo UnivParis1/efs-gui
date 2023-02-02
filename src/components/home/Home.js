@@ -179,8 +179,8 @@ export function Home() {
                             fullWidth
                             sx={{my: theme.spacing(3), backgroundColor: "#FFFFFF"}}
                         />
-                        <Grid container direction="row" spacing={theme.spacing(4)} pb={2}>
-                            <Grid item md={4}>
+                        <Grid container direction="row" spacing={theme.spacing(2)} pb={2}>
+                            <Grid item md={4} xs={8}>
                                 <Stack direction="row" alignItems="center" sx={{alignContent: "center"}}>
                                     <HtmlTooltip
                                         enterTouchDelay={0}
@@ -238,10 +238,10 @@ export function Home() {
 
                                 </Stack>
                             </Grid>
-                            <Grid item md={2}><LoadingButton onClick={() => setSubmit(true)} loading={submit}
+                            <Grid item md={2} xs={2}><LoadingButton onClick={() => setSubmit(true)} loading={submit}
                                                              disabled={!validationEnabled}
                                                              variant="contained">Valider</LoadingButton></Grid>
-                            <Grid item md={6}><Stack direction="row" alignItems="center" justifyContent="end"
+                            <Grid item md={12}><Stack direction="row" alignItems="center" justifyContent="end"
                                                      spacing={2}>
                                 <HelpTooltip msgKey={"include-coauthors"}/>
                                 {!includeCoAuthors && <BsPersonFill fontSize="28px"/>}
