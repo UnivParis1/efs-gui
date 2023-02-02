@@ -1,10 +1,10 @@
 {
-  "home.title": "Recherche d'expertise assistée par l'intelligence artificielle",
-  "form.help": "Veuillez saisir une phrase (sujet, projet de recherche ou d'article...) dans la langue de votre choix. La casse du texte est prise en compte.",
-  "form.aria.choose-model": "Choisissez votre modèle de langage, Bert ou GPT-3",
-  "form.aria.placeholder": "Ex. L'animal dans les rites funéraires à l'âge du fer; Corporate governance and Corporate Social Responsibility.",
-  "form.tooltip.extension.title": "Extension sémantique",
-  "form.tooltip.extension.description": "Plus ce paramètre est élevé, plus grande sera la distance sémantique de recherche autour de l'énoncé que vous avez soumis.",
-  "form.tooltip.extension.li1": "Choisissez une extension faible si vous souhaitez que la recherche soit précise : il favorisera la découverte d'auteurs ayant produit de rares énoncés très proches de votre sujet.",
-  "form.tooltip.extension.li2": "Un seuil élevé permet au contraire de détecter des auteurs ayant écrit un grand nombre de textes plus ou moins en rapport avec votre sujet."
+    "home.title": "Recherche d'expertise assistée par l'intelligence artificielle",
+    "form.help": "Veuillez saisir une phrase (sujet, projet de recherche ou d'article...) dans la langue de votre choix. La casse du texte est prise en compte.",
+    "form.aria.choose-model": "Choisissez votre modèle de langage, Bert ou GPT-3",
+    "form.aria.placeholder": "Ex. L'animal dans les rites funéraires à l'âge du fer; Corporate governance and Corporate Social Responsibility.",
+    "form.tooltip.extension.title": "Extension sémantique",
+    "form.tooltip.extension.description": "Plus ce paramètre est élevé, plus grande sera la distance sémantique de recherche autour de l'énoncé que vous avez soumis.",
+    "form.tooltip.extension.li1": "Choisissez une extension faible si vous souhaitez que la recherche soit précise : il favorisera la découverte d'auteurs ayant produit de rares énoncés très proches de votre sujet.",
+    "form.tooltip.extension.li2": "Un seuil élevé permet au contraire de détecter des auteurs ayant écrit un grand nombre de textes plus ou moins en rapport avec votre sujet."
 }
