@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
-    Box,
+    Box, Container,
     Grid,
     IconButton,
     Slider,
@@ -23,6 +23,9 @@ import PublicationsAccordions from "./PublicationsAccordion";
 import {LoadingButton} from "@mui/lab";
 import {FormattedMessage, useIntl} from "react-intl";
 import LangSwitcher from "../commons/LangSwitcher";
+import P1Logo from "./P1Logo";
+import StyledSwitch from "../commons/StyledSwitch";
+
 
 export function Home() {
     const intl = useIntl();
@@ -135,161 +138,180 @@ export function Home() {
         />
     }, [filteredResult, callbacks])
 
-    return (<Grid container spacing={24}>
-            <Grid item md={3}></Grid>
-            <Grid item md={6}>
-                <Grid container direction="column">
-                    <Grid container direction="row" spacing={theme.spacing(4)}>
-                        <Grid item md={6}>
-                            <Typography variant="h2" sx={{fontSize: "20px", mt: "2em"}}>
+    return (
+        <Grid container spacing={0}>
+            <Grid item md={12} bgcolor={theme.palette.secondary.dark}>
+                <Container maxWidth="md">
+                    <Grid container direction="row" alignItems="center" >
+                        <Grid item md={6} xs={5}><Typography component="h1" variant="h3"
+                                                             sx={{
+                                                                 margin: {md: 1, xs: 1},
+                                                                 fontSize: {md: "36px", xs: "24px"},
+                                                                 color: theme.palette.secondary.contrastText
+                                                             }}>
+                            <FormattedMessage
+                                id="home.title"
+                            /></Typography></Grid>
+                        <Grid item md={1} xs={2} sx={{marginLeft: 1, marginRight: 2}}>
+                            <P1Logo width="100%" alt="Paris 1 Panthéon-Sorbonne"/>
+                        </Grid>
+                        <Grid item md={4} xs={4}>
+                            <Typography variant="h2"
+                                        sx={{
+                                            fontSize: {md: "20px", xs: "14px"},
+                                            color: theme.palette.secondary.contrastText
+                                        }}>
                                 <FormattedMessage
-                                    id="home.title"
+                                    id="home.subtitle"
                                 />
                             </Typography>
                         </Grid>
-                        <Grid item md={6} mt={theme.spacing(3)}>
-                            <LangSwitcher/>
-                            <img src="./p1.svg" width="100%" alt="Paris 1 Panthéon-Sorbonne"/>
-                        </Grid>
                     </Grid>
-                    <Grid item md={12} mt={theme.spacing(4)}>
-
-                        <Box
-                            component="form"
-                            noValidate
-                            autoComplete="off"
-                        ><Grid container direction="row">
-                            <Grid item md={6}>
+                </Container>
+            </Grid>
+            <Grid item md={12} bgcolor={theme.palette.primary.light} pt={theme.spacing(2)}>
+                <Container maxWidth="md">
+                    <Stack direction="column">
+                        <Grid container direction="row">
+                            <Grid item md={8} xs={12}>
                                 <FormattedMessage id="form.help"/>
                             </Grid>
-
-                            <Grid item md={6} textAlign="end">
-                                <Stack direction="row" spacing={1} justifyContent="end">
-                                    <Typography>S-Bert</Typography>
-                                    <Switch checked={adaModel}
-                                            inputProps={{'aria-label': intl.formatMessage({id: 'form.aria.choose-model'})}}
-                                            onChange={() => setAdaModel(!adaModel)}/>
-                                    <Typography>GPT-3</Typography>
+                            <Grid item md={4} xs={12}>
+                                <Stack direction="column">
+                                    <Stack direction="row" spacing={1} justifyContent="center">
+                                        <LangSwitcher/>
+                                    </Stack>
+                                    <Stack direction="row" spacing={1} justifyContent="center">
+                                        <Typography>S-Bert</Typography>
+                                        <StyledSwitch checked={adaModel}
+                                                      inputProps={{'aria-label': intl.formatMessage({id: 'form.aria.choose-model'})}}
+                                                      onChange={() => setAdaModel(!adaModel)}/>
+                                        <Typography>GPT-3</Typography>
+                                    </Stack>
                                 </Stack>
                             </Grid>
                         </Grid>
-                            <TextField
-                                id="outlined-multiline-static"
-                                label={<div>
-                                    <Typography variant="caption">
-                                        <FormattedMessage id="form.aria.placeholder"/>
+                        <TextField
+                            id="outlined-multiline-static"
+                            label={<div>
+                                <Typography variant="caption">
+                                    <FormattedMessage id="form.aria.placeholder"/>
+                                </Typography>
+                            </div>}
+                            multiline
+                            rows={4}
+                            value={sentence}
+                            onChange={e => {
+                                setValidationEnabled(true)
+                                setSentence(e.target.value);
+                            }}
+                            fullWidth
+                            sx={{my: theme.spacing(3), backgroundColor: "#FFFFFF"}}
+                        />
+                        <Grid container direction="row" spacing={theme.spacing(4)} pb={2}>
+                            <Grid item md={4}>
+                                <Stack direction="row" alignItems="center" sx={{alignContent: "center"}}>
+                                    <HtmlTooltip
+                                        my={theme.spacing(3)}
+                                        title={
+                                            <>
+                                                <Typography
+                                                    color='inherit'>{intl.formatMessage({id: 'form.tooltip.extension.title'})}</Typography>
+                                                <p>{intl.formatMessage({id: 'form.tooltip.extension.description'})}</p>
+                                                <ul>
+                                                    <li>{intl.formatMessage({id: 'form.tooltip.extension.li1'})}</li>
+                                                    <li>{intl.formatMessage({id: 'form.tooltip.extension.li2'})}</li>
+                                                </ul>
+                                            </>
+                                        }
+                                    >
+                                        <IconButton>
+                                            <HelpOutlineIcon/>
+                                        </IconButton>
+                                    </HtmlTooltip>
+                                    <Typography id="input-slider" mr={2} ml={0}>
+                                        Extension
                                     </Typography>
-                                </div>}
-                                multiline
-                                rows={4}
-                                value={sentence}
-                                onChange={e => {
-                                    setValidationEnabled(true)
-                                    setSentence(e.target.value);
-                                }}
-                                fullWidth
-                                sx={{my: theme.spacing(3)}}
-                            />
-                            <Grid container direction="row" spacing={theme.spacing(2)}>
-                                <Grid item md={4}>
-                                    <Stack direction="row" alignItems="center" sx={{alignContent: "center"}}>
-                                        <HtmlTooltip
-                                            my={theme.spacing(3)}
-                                            title={
-                                                <>
-                                                    <Typography
-                                                        color='inherit'>{intl.formatMessage({id: 'form.tooltip.extension.title'})}</Typography>
-                                                    <p>{intl.formatMessage({id: 'form.tooltip.extension.description'})}</p>
-                                                    <ul>
-                                                        <li>{intl.formatMessage({id: 'form.tooltip.extension.li1'})}</li>
-                                                        <li>{intl.formatMessage({id: 'form.tooltip.extension.li2'})}</li>
-                                                    </ul>
-                                                </>
-                                            }
-                                        >
-                                            <IconButton>
-                                                <HelpOutlineIcon/>
-                                            </IconButton>
-                                        </HtmlTooltip>
-                                        <Typography id="input-slider" mr={2} ml={0}>
-                                            Extension
-                                        </Typography>
-                                        <Slider
-                                            aria-label="Extension"
-                                            value={precision}
-                                            valueLabelDisplay="auto"
-                                            valueLabelFormat={(value) => {
-                                                const steps = new Map(Object.entries({
-                                                    0.2: "Très précis",
-                                                    0.3: "Précis",
-                                                    0.4: "Approximatif",
-                                                    0.5: "Très approximatif",
-                                                    1: "Aleatoire",
-                                                }))
-                                                let minKey = 10;
-                                                let selectedLabel;
-                                                for (const [key, label] of steps) {
-                                                    if (value < key && key < minKey) {
-                                                        selectedLabel = label;
-                                                        minKey = key;
-                                                    }
+                                    <Slider
+                                        aria-label="Extension"
+                                        value={precision}
+                                        valueLabelDisplay="auto"
+                                        valueLabelFormat={(value) => {
+                                            const steps = new Map(Object.entries({
+                                                0.2: "Très précis",
+                                                0.3: "Précis",
+                                                0.4: "Approximatif",
+                                                0.5: "Très approximatif",
+                                                1: "Aleatoire",
+                                            }))
+                                            let minKey = 10;
+                                            let selectedLabel;
+                                            for (const [key, label] of steps) {
+                                                if (value < key && key < minKey) {
+                                                    selectedLabel = label;
+                                                    minKey = key;
                                                 }
-                                                return selectedLabel;
-                                            }}
-                                            step={0.1}
-                                            min={0.1}
-                                            max={0.7}
-                                            onChange={(e) => {
-                                                setValidationEnabled(true)
-                                                setPrecision(e.target.value);
-                                            }}
-                                        />
+                                            }
+                                            return selectedLabel;
+                                        }}
+                                        step={0.1}
+                                        min={0.1}
+                                        max={0.7}
+                                        onChange={(e) => {
+                                            setValidationEnabled(true)
+                                            setPrecision(e.target.value);
+                                        }}
+                                    />
 
-                                    </Stack>
-                                </Grid>
-                                <Grid item md={2}><LoadingButton onClick={() => setSubmit(true)} loading={submit}
-                                                                 disabled={!validationEnabled}
-                                                                 variant="outlined">Valider</LoadingButton></Grid>
-                                <Grid item md={6}><Stack direction="row">
-                                    <Typography>Limiter aux unités de recherche de Paris 1
-                                        Panthéon-Sorbonne</Typography>
-                                    <Switch checked={includeCoAuthors}
-                                            inputProps={{'aria-label': 'Limit to Paris 1 Pantheon-Sorbonne authors'}}
-                                            onChange={() => setIncludeCoAuthors(!includeCoAuthors)}/>
-                                    <Typography>Inclure les coauteurs</Typography>
-                                </Stack></Grid>
+                                </Stack>
+                            </Grid>
+                            <Grid item md={2}><LoadingButton onClick={() => setSubmit(true)} loading={submit}
+                                                             disabled={!validationEnabled}
+                                                             variant="contained">Valider</LoadingButton></Grid>
+                            <Grid item md={4}><Stack direction="row">
 
+                                <Switch checked={includeCoAuthors}
+                                        inputProps={{'aria-label': 'Limit to Paris 1 Pantheon-Sorbonne authors'}}
+                                        onChange={() => setIncludeCoAuthors(!includeCoAuthors)}/>
+                            </Stack></Grid>
+
+                        </Grid>
+
+                    </Stack>
+                </Container>
+            </Grid>
+            <Container maxWidth="md">
+                <Box
+                    component="form"
+                    noValidate
+                    autoComplete="off"
+                ><Grid container direction="column">
+                    <Grid item md={12} sx={{opacity: submit ? 0.3 : 1}}>
+                        {cloud}
+                    </Grid>
+                    {name &&
+                        <Grid container sx={{mt: theme.spacing(4)}}>
+                            <Grid item xs>
+                                <Typography variant="h5" component="div">
+                                    {name}
+                                </Typography>
                             </Grid>
-                            <Grid container direction="column">
-                                <Grid item md={12} sx={{opacity: submit ? 0.3 : 1}}>
-                                    {cloud}
-                                </Grid>
-                                {name &&
-                                    <Grid container sx={{mt: theme.spacing(4)}}>
-                                        <Grid item xs>
-                                            <Typography variant="h5" component="div">
-                                                {name}
-                                            </Typography>
-                                        </Grid>
-                                        <Grid item>
-                                            <Typography gutterBottom variant="h6" component="div">
-                                                {score}
-                                            </Typography>
-                                        </Grid>
-                                        <Typography color="text.secondary" variant="body2">
-                                            Le degré d'expertise présumé de cet auteur vis à vis de votre requête a été
-                                            inféré à partir des titres ou résumés de publications ci-dessous :
-                                        </Typography>
-                                    </Grid>}
-                                <Grid item md={12} sx={{padding: 0}}>
-                                    {sentencePanel}
-                                </Grid>
+                            <Grid item>
+                                <Typography gutterBottom variant="h6" component="div">
+                                    {score}
+                                </Typography>
                             </Grid>
-                        </Box>
+                            <Typography color="text.secondary" variant="body2">
+                                Le degré d'expertise présumé de cet auteur vis à vis de votre requête a été
+                                inféré à partir des titres ou résumés de publications ci-dessous :
+                            </Typography>
+                        </Grid>}
+                    <Grid item md={12} sx={{padding: 0}}>
+                        {sentencePanel}
                     </Grid>
                 </Grid>
-            </Grid>
-
+                </Box>
+            </Container>
         </Grid>
-    );
+    )
 }

@@ -14,14 +14,16 @@ function App() {
         palette: {
             type: 'light',
             primary: {
-                main: '#b52168',
+                main: '#c89110',
+                light: '#f6f1ee',
                 dark: '#80003e',
                 contrastText: '#ffffff',
             },
             secondary: {
                 main: '#619afc',
                 light: '#99caff',
-                dark: '#186cc8',
+                dark: '#00326e',
+                contrastText: '#ffffff',
             },
             info: {
                 main: '#18ffff',
