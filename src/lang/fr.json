@@ -9,5 +9,6 @@
     "form.tooltip.extension.li1": "Choisissez une extension faible si vous souhaitez que la recherche soit précise : il favorisera la découverte d'auteurs ayant produit de rares énoncés très proches de votre sujet.",
     "form.tooltip.extension.li2": "Un seuil élevé permet au contraire de détecter des auteurs ayant écrit un grand nombre de textes plus ou moins en rapport avec votre sujet.",
     "form.help.coauthors.exclude": "Limiter aux unités de recherche de Paris 1 Panthéon-Sorbonne",
-    "form.help.coauthors.include": "Inclure les coauteurs"
+    "form.help.coauthors.include": "Inclure les coauteurs",
+    "result.help.scoring": "Le degré d'expertise présumé de cet auteur vis à vis de votre requête a été inféré à partir des titres ou résumés de publications ci-dessous :"
 }

@@ -1,19 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {
-    Box,
-    Container,
-    Grid,
-    IconButton,
-    Slider,
-    Stack,
-    styled,
-    Switch,
-    TextField,
-    Tooltip,
-    tooltipClasses,
-    Typography,
-    useTheme
-} from "@mui/material";
+import {Box, Container, Grid, IconButton, Slider, Stack, TextField, Typography, useTheme} from "@mui/material";
 import axios from "axios";
 import isStringBlank from "is-string-blank"
 import ReactWordcloud from "react-wordcloud";
@@ -25,6 +11,8 @@ import {FormattedMessage, useIntl} from "react-intl";
 import LangSwitcher from "../commons/LangSwitcher";
 import P1Logo from "./P1Logo";
 import StyledSwitch from "../commons/StyledSwitch";
+import {BsPeople, BsPeopleFill, BsPerson, BsPersonFill} from "react-icons/bs";
+import HelpTooltip, {HtmlTooltip} from "../commons/HelpTooltip";
 
 const COLORS = ["c89108", "927b4b", "6b6760", "46546C", "00326e", "e55302", "9f5740", "765458", "394a59", "00326e"];
 
@@ -46,17 +34,6 @@ export function Home() {
 
     const randomColor = useCallback(() => COLORS[Math.floor(Math.random() * COLORS.length)], [])
 
-    const HtmlTooltip = styled(({className, ...props}) => (
-        <Tooltip {...props} classes={{popper: className}}/>
-    ))(({theme}) => ({
-        [`& .${tooltipClasses.tooltip}`]: {
-            backgroundColor: '#f5f5f9',
-            color: 'rgba(0, 0, 0, 0.87)',
-            maxWidth: 220,
-            fontSize: theme.typography.pxToRem(12),
-            border: '1px solid #dadde9',
-        },
-    }));
 
     useEffect(() => {
         const fetchData = () => {
@@ -170,15 +147,17 @@ export function Home() {
                             </Grid>
                             <Grid item md={4} xs={12}>
                                 <Stack direction="column">
-                                    <Stack direction="row" spacing={1} justifyContent="center">
+                                    <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
                                         <LangSwitcher/>
                                     </Stack>
-                                    <Stack direction="row" spacing={1} justifyContent="center">
+                                    <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
+                                        <HelpTooltip msgKey={"bert-model"}/>
                                         <Typography>S-Bert</Typography>
                                         <StyledSwitch checked={adaModel}
                                                       inputProps={{'aria-label': intl.formatMessage({id: 'form.aria.choose-model'})}}
                                                       onChange={() => setAdaModel(!adaModel)}/>
                                         <Typography>GPT-3</Typography>
+                                        <HelpTooltip msgKey={"ada-model"}/>
                                     </Stack>
                                 </Stack>
                             </Grid>
@@ -204,6 +183,8 @@ export function Home() {
                             <Grid item md={4}>
                                 <Stack direction="row" alignItems="center" sx={{alignContent: "center"}}>
                                     <HtmlTooltip
+                                        enterTouchDelay={0}
+                                        leaveTouchDelay={5000}
                                         my={theme.spacing(3)}
                                         title={
                                             <>
@@ -260,11 +241,17 @@ export function Home() {
                             <Grid item md={2}><LoadingButton onClick={() => setSubmit(true)} loading={submit}
                                                              disabled={!validationEnabled}
                                                              variant="contained">Valider</LoadingButton></Grid>
-                            <Grid item md={4}><Stack direction="row">
-
-                                <Switch checked={includeCoAuthors}
-                                        inputProps={{'aria-label': 'Limit to Paris 1 Pantheon-Sorbonne authors'}}
-                                        onChange={() => setIncludeCoAuthors(!includeCoAuthors)}/>
+                            <Grid item md={6}><Stack direction="row" alignItems="center" justifyContent="end"
+                                                     spacing={2}>
+                                <HelpTooltip msgKey={"include-coauthors"}/>
+                                {!includeCoAuthors && <BsPersonFill fontSize="28px"/>}
+                                {includeCoAuthors && <BsPerson fontSize="28px"/>}
+                                <StyledSwitch checked={includeCoAuthors}
+                                              inputProps={{'aria-label': 'Limit to Paris 1 Pantheon-Sorbonne authors'}}
+                                              onChange={() => setIncludeCoAuthors(!includeCoAuthors)}/>
+                                {includeCoAuthors && <BsPeopleFill fontSize="28px"/>}
+                                {!includeCoAuthors && <BsPeople fontSize="28px"/>}
+                                <HelpTooltip msgKey={"exclude-coauthors"}/>
                             </Stack></Grid>
 
                         </Grid>
@@ -278,22 +265,23 @@ export function Home() {
                     noValidate
                     autoComplete="off"
                 ><Grid container direction="column">
-                    <Grid item md={12} sx={{opacity: submit ? 0.3 : 1}}>
+                    <Grid item md={12} sx={{opacity: submit ? 0.3 : 1, mt: 2, mb: 2}}>
                         {cloud}
                     </Grid>
                     {name &&
-                        <Grid container sx={{mt: theme.spacing(4)}}>
-                            <Grid item xs>
+                        <Grid container direction={"row"}>
+                            <Grid item md={4} xs={12}>
                                 <Typography variant="h5" sx={{color: `#${color}`}} component="div">
                                     {name}
                                 </Typography>
                             </Grid>
-                            <Typography color="text.secondary" variant="body2">
-                                Le degré d'expertise présumé de cet auteur vis à vis de votre requête a été
-                                inféré à partir des titres ou résumés de publications ci-dessous :
-                            </Typography>
+                            <Grid item md={8}  xs={12}>
+                                <Typography color="text.secondary" variant="body2">
+                                    <FormattedMessage id="result.help.scoring"/>
+                                </Typography>
+                            </Grid>
                         </Grid>}
-                    <Grid item md={12} sx={{padding: 0}}>
+                    <Grid item md={12} sx={{padding: 0, mt: 1}}>
                         {sentencePanel}
                     </Grid>
                 </Grid>
