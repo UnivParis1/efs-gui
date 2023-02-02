@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
     Box,
-    Divider,
     Grid,
     IconButton,
     Slider,
@@ -22,8 +21,11 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import env from "react-dotenv";
 import PublicationsAccordions from "./PublicationsAccordion";
 import {LoadingButton} from "@mui/lab";
+import {FormattedMessage, useIntl} from "react-intl";
+import LangSwitcher from "../commons/LangSwitcher";
 
 export function Home() {
+    const intl = useIntl();
     const theme = useTheme();
     const [sentence, setSentence] = useState('');
     const [submit, setSubmit] = useState(false);
@@ -139,15 +141,14 @@ export function Home() {
                 <Grid container direction="column">
                     <Grid container direction="row" spacing={theme.spacing(4)}>
                         <Grid item md={6}>
-                            <Typography variant="h2" sx={{fontSize: "20px", mt: "2em"}}>Recherche d'expertise assistée
-                                par l'intelligence artificielle
-                            </Typography>
-                            <Divider sx={{m: theme.spacing(1)}}/>
-                            <Typography variant="h2" sx={{fontSize: "20px", marginY: "0em"}}>AI Powered expert finder
-                                system
+                            <Typography variant="h2" sx={{fontSize: "20px", mt: "2em"}}>
+                                <FormattedMessage
+                                    id="home.title"
+                                />
                             </Typography>
                         </Grid>
                         <Grid item md={6} mt={theme.spacing(3)}>
+                            <LangSwitcher/>
                             <img src="./p1.svg" width="100%" alt="Paris 1 Panthéon-Sorbonne"/>
                         </Grid>
                     </Grid>
@@ -159,15 +160,14 @@ export function Home() {
                             autoComplete="off"
                         ><Grid container direction="row">
                             <Grid item md={6}>
-                                <label>Veuillez saisir une phrase (sujet, projet de recherche ou
-                                    d'article...) dans la langue de votre choix. La casse du texte est prise en
-                                    compte.</label>
+                                <FormattedMessage id="form.help"/>
                             </Grid>
 
                             <Grid item md={6} textAlign="end">
                                 <Stack direction="row" spacing={1} justifyContent="end">
                                     <Typography>S-Bert</Typography>
-                                    <Switch checked={adaModel} inputProps={{'aria-label': 'Choose adaModel'}}
+                                    <Switch checked={adaModel}
+                                            inputProps={{'aria-label': intl.formatMessage({id: 'form.aria.choose-model'})}}
                                             onChange={() => setAdaModel(!adaModel)}/>
                                     <Typography>GPT-3</Typography>
                                 </Stack>
@@ -177,8 +177,7 @@ export function Home() {
                                 id="outlined-multiline-static"
                                 label={<div>
                                     <Typography variant="caption">
-                                        Ex. L'animal dans les rites funéraires à l'âge du fer; Corporate governance and
-                                        Corporate Social Responsibility.
+                                        <FormattedMessage id="form.aria.placeholder"/>
                                     </Typography>
                                 </div>}
                                 multiline
@@ -198,20 +197,12 @@ export function Home() {
                                             my={theme.spacing(3)}
                                             title={
                                                 <>
-                                                    <Typography color="inherit">Précision</Typography>
-                                                    <p>Plus ce paramètre est élevé, plus grande sera la distance
-                                                        sémantique de recherche autour de l'énoncé que vous avez
-                                                        soumis.</p>
+                                                    <Typography
+                                                        color='inherit'>{intl.formatMessage({id: 'form.tooltip.extension.title'})}</Typography>
+                                                    <p>{intl.formatMessage({id: 'form.tooltip.extension.description'})}</p>
                                                     <ul>
-                                                        <li>Un seuil faible favorise la découverte d'auteurs ayant
-                                                            produit <em>de rares énoncés</em>&nbsp;<b>très proches
-                                                                de
-                                                                votre sujet</b>.
-                                                        </li>
-                                                        <li>Un seuil élevé permet au contraire de détecter des
-                                                            auteurs ayant écrit <em>un grand nombre de textes</em>
-                                                            &nbsp;<b>plus ou moins en rapport avec votre sujet</b>.
-                                                        </li>
+                                                        <li>{intl.formatMessage({id: 'form.tooltip.extension.li1'})}</li>
+                                                        <li>{intl.formatMessage({id: 'form.tooltip.extension.li2'})}</li>
                                                     </ul>
                                                 </>
                                             }
