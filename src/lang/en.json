@@ -1,5 +1,5 @@
 {
-    "home.title": "AI Powered expert finder system",
+    "home.title": "Find an expert",
     "form.help": "Please enter a sentence (subject, research or article project...) in the language of your choice. The text is case sensitive.",
     "form.aria.choose-model": "Choose your language model, Bert or GPT-3",
     "form.aria.placeholder": "Ex. The animal in the funeral rites of the Iron Age; Corporate governance and Corporate Social Responsibility.",

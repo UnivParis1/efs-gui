@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Box, Container, Grid, IconButton, Slider, Stack, TextField, Typography, useTheme} from "@mui/material";
+import {Container, Grid, IconButton, Slider, Stack, TextField, Typography, useTheme} from "@mui/material";
 import axios from "axios";
 import isStringBlank from "is-string-blank"
 import ReactWordcloud from "react-wordcloud";
@@ -13,6 +13,8 @@ import P1Logo from "./P1Logo";
 import StyledSwitch from "../commons/StyledSwitch";
 import {BsPeople, BsPeopleFill, BsPerson, BsPersonFill} from "react-icons/bs";
 import HelpTooltip, {HtmlTooltip} from "../commons/HelpTooltip";
+import {MdCloud, MdOutlineCloud, MdOutlineList, MdOutlineViewList} from "react-icons/md";
+import ResultsList from "../commons/ResultsList";
 
 const COLORS = ["c89108", "927b4b", "6b6760", "46546C", "00326e", "e55302", "9f5740", "765458", "394a59", "00326e"];
 
@@ -24,11 +26,13 @@ export function Home() {
     const [submit, setSubmit] = useState(false);
     const [result, setResult] = useState([]);
     const [filteredResult, setFilteredResult] = useState([]);
+    const [selectedAuthor, setSelectedAuthor] = useState(undefined)
     const [publications, setPublications] = useState([]);
-    const [precision, setPrecision] = useState(2.0);
+    const [precision, setPrecision] = useState(0.05);
     const [name, setName] = useState('');
     const [color, setColor] = useState("000000");
     const [adaModel, setAdaModel] = useState(false);
+    const [displayMode, setDisplayMode] = useState('cloud');
     const [includeCoAuthors, setIncludeCoAuthors] = useState(false);
     const [validationEnabled, setValidationEnabled] = useState(true);
 
@@ -51,17 +55,20 @@ export function Home() {
                                 "value": result.score,
                                 "pubs": result.pubs,
                                 "own_inst": result.own_inst,
+                                "max_score": result.max_score,
+                                "min_dist": result.min_dist,
+                                "identifier": result.identifier,
                                 color: randomColor()
                             }
                         })
                     });
                     setSubmit(false)
                 });
-
         };
         if (submit) {
+            setSelectedAuthor(undefined);
             setPublications([])
-            setName("")
+            setName(undefined)
             fetchData();
         }
     }, [submit, sentence, precision, randomColor, adaModel])
@@ -84,20 +91,38 @@ export function Home() {
         return publications ? <PublicationsAccordions publications={publications} preferredLanguage={'fr'}/> : ""
     }, [publications])
 
-    const wordClick = useCallback(word => {
+    const wordClickList = useCallback(word => {
+        if (selectedAuthor === word.identifier) {
+            setSelectedAuthor(undefined);
+            setPublications([]);
+            setName(undefined);
+            setColor(undefined);
+        } else {
+            setSelectedAuthor(word.identifier);
+            setPublications(word.pubs);
+            setName(word.text);
+            setColor(word.color);
+        }
+
+    }, [selectedAuthor])
+
+    const wordClickCloud = useCallback(word => {
+        setSelectedAuthor(word.identifier);
         setPublications(word.pubs);
         setName(word.text);
         setColor(word.color);
+
+
     }, [])
 
     const callbacks = useMemo(() => {
         return {
-            onWordClick: wordClick,
+            onWordClick: wordClickCloud,
             getWordColor: word => {
                 return word.text === name ? "black" : `#${word.color}`;
             },
         }
-    }, [wordClick, name])
+    }, [wordClickCloud, name])
 
     const cloud = useMemo(() => {
         return <ReactWordcloud
@@ -107,27 +132,45 @@ export function Home() {
         />
     }, [filteredResult, callbacks])
 
+
+    const list = useMemo(() => {
+        return <ResultsList
+            authors={filteredResult}
+            selectedAuthor={selectedAuthor}
+            onClick={wordClickList}
+            publicationsPanel={sentencePanel}
+        />
+    }, [filteredResult, sentencePanel, selectedAuthor, wordClickList])
+
     return (
         <Grid container spacing={0}>
             <Grid item md={12} bgcolor={theme.palette.secondary.dark}>
                 <Container maxWidth="md">
                     <Grid container direction="row" alignItems="center">
-                        <Grid item md={6} xs={5}><Typography component="h1" variant="h3"
-                                                             sx={{
-                                                                 margin: {md: 1, xs: 1},
-                                                                 fontSize: {md: "36px", xs: "24px"},
-                                                                 color: theme.palette.secondary.contrastText
-                                                             }}>
+                        <Grid item md={6} xs={5} sx={{display: {xs: "none", sm: "block"}}}><Typography component="h1"
+                                                                                                       variant="h3"
+                                                                                                       sx={{
+                                                                                                           margin: {
+                                                                                                               md: 1,
+                                                                                                               xs: 1
+                                                                                                           },
+                                                                                                           fontSize: {
+                                                                                                               md: "32px",
+                                                                                                               sm: "32px",
+                                                                                                               xs: "20px"
+                                                                                                           },
+                                                                                                           color: theme.palette.secondary.contrastText
+                                                                                                       }}>
                             <FormattedMessage
                                 id="home.title"
                             /></Typography></Grid>
                         <Grid item md={1} xs={2} sx={{marginLeft: 1, marginRight: 2}}>
                             <P1Logo width="100%" alt="Paris 1 Panthéon-Sorbonne"/>
                         </Grid>
-                        <Grid item md={4} xs={4}>
+                        <Grid item md={4} sm={4} xs={9}>
                             <Typography variant="h2"
                                         sx={{
-                                            fontSize: {md: "20px", xs: "14px"},
+                                            fontSize: {md: "20px", sm: "20px", xs: "16px"},
                                             color: theme.palette.secondary.contrastText
                                         }}>
                                 <FormattedMessage
@@ -142,15 +185,13 @@ export function Home() {
                 <Container maxWidth="md">
                     <Stack direction="column">
                         <Grid container direction="row">
-                            <Grid item md={8} xs={12}>
-                                <FormattedMessage id="form.help"/>
+                            <Grid item md={8} xs={12} sx={{mb: {xs: 2}}}>
+                                < FormattedMessage id="form.help"/>
                             </Grid>
                             <Grid item md={4} xs={12}>
                                 <Stack direction="column">
-                                    <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
-                                        <LangSwitcher/>
-                                    </Stack>
-                                    <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
+                                    <LangSwitcher/>
+                                    <Stack direction="row" justifyContent="center" alignItems="center">
                                         <HelpTooltip msgKey={"bert-model"}/>
                                         <Typography>S-Bert</Typography>
                                         <StyledSwitch checked={adaModel}
@@ -170,17 +211,20 @@ export function Home() {
                                 </Typography>
                             </div>}
                             multiline
-                            rows={4}
+                            rows={2}
                             value={sentence}
                             onChange={e => {
                                 setValidationEnabled(true)
                                 setSentence(e.target.value);
                             }}
                             fullWidth
-                            sx={{my: theme.spacing(3), backgroundColor: "#FFFFFF"}}
+
+                            sx={{
+                                my: theme.spacing(3), backgroundColor: "#FFFFFF"
+                            }}
                         />
-                        <Grid container direction="row" spacing={theme.spacing(2)} pb={2}>
-                            <Grid item md={4} xs={8}>
+                        <Grid container direction="row" pb={2}>
+                            <Grid item md={6} xs={9}>
                                 <Stack direction="row" alignItems="center" sx={{alignContent: "center"}}>
                                     <HtmlTooltip
                                         enterTouchDelay={0}
@@ -238,11 +282,12 @@ export function Home() {
 
                                 </Stack>
                             </Grid>
-                            <Grid item md={2} xs={2}><LoadingButton onClick={() => setSubmit(true)} loading={submit}
-                                                             disabled={!validationEnabled}
-                                                             variant="contained">Valider</LoadingButton></Grid>
-                            <Grid item md={12}><Stack direction="row" alignItems="center" justifyContent="end"
-                                                     spacing={2}>
+                            <Grid item md={2} xs={2} sx={{pl: {xs: theme.spacing(1)}}}><LoadingButton
+                                onClick={() => setSubmit(true)} loading={submit}
+                                                                    disabled={!validationEnabled}
+                                                                    variant="contained">Valider</LoadingButton></Grid>
+                            <Grid item md={4} xs={12}><Stack direction="row" alignItems="center" justifyContent="center"
+                                                     spacing={1}>
                                 <HelpTooltip msgKey={"include-coauthors"}/>
                                 {!includeCoAuthors && <BsPersonFill fontSize="28px"/>}
                                 {includeCoAuthors && <BsPerson fontSize="28px"/>}
@@ -260,32 +305,39 @@ export function Home() {
                 </Container>
             </Grid>
             <Container maxWidth="md">
-                <Box
-                    component="form"
-                    noValidate
-                    autoComplete="off"
-                ><Grid container direction="column">
-                    <Grid item md={12} sx={{opacity: submit ? 0.3 : 1, mt: 2, mb: 2}}>
-                        {cloud}
+                <Grid container direction="column">
+                    <Grid item md={12} sx={{mt: 2}}><Stack direction="row" alignItems="center" justifyContent="center"
+                                                           spacing={2}>
+                        {displayMode === 'cloud' && <MdCloud fontSize="28px"/>}
+                        {displayMode === 'list' && <MdOutlineCloud fontSize="28px"/>}
+                        <StyledSwitch checked={displayMode === 'list'}
+                                      inputProps={{'aria-label': 'Choose view mode, cloud or list'}}
+                                      onChange={(e) => setDisplayMode(e.target.checked ? 'list' : 'cloud')}/>
+                        {displayMode === 'list' && <MdOutlineViewList fontSize="28px"/>}
+                        {displayMode === 'cloud' && <MdOutlineList fontSize="28px"/>}
+                    </Stack></Grid>
+                    <Grid item md={12} sx={{opacity: submit ? 0.3 : 1, mt: 1, mb: 2}}>
+                        {(displayMode === 'cloud') && cloud}
+                        {(displayMode === 'list') && list}
                     </Grid>
-                    {name &&
+                    {(displayMode === 'cloud' && selectedAuthor !== undefined) &&
                         <Grid container direction={"row"}>
                             <Grid item md={4} xs={12}>
                                 <Typography variant="h5" sx={{color: `#${color}`}} component="div">
                                     {name}
                                 </Typography>
                             </Grid>
-                            <Grid item md={8}  xs={12}>
+                            <Grid item md={8} xs={12}>
                                 <Typography color="text.secondary" variant="body2">
                                     <FormattedMessage id="result.help.scoring"/>
                                 </Typography>
                             </Grid>
                         </Grid>}
-                    <Grid item md={12} sx={{padding: 0, mt: 1}}>
-                        {sentencePanel}
-                    </Grid>
+                    {(displayMode === 'cloud' && selectedAuthor !== undefined) &&
+                        <Grid item md={12} sx={{padding: 0, mt: 1}}>
+                            {sentencePanel}
+                        </Grid>}
                 </Grid>
-                </Box>
             </Container>
         </Grid>
     )
