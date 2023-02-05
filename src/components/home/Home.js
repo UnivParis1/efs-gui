@@ -362,11 +362,11 @@ export function Home() {
                                             valueLabelDisplay="auto"
                                             valueLabelFormat={(value) => {
                                                 const steps = new Map(Object.entries({
-                                                    0.2: "Très précis",
-                                                    0.3: "Précis",
-                                                    0.4: "Approximatif",
-                                                    0.5: "Très approximatif",
-                                                    1: "Aleatoire",
+                                                    0.2: intl.formatMessage({id: 'form.help.precision.step1'}),
+                                                    0.3: intl.formatMessage({id: 'form.help.precision.step2'}),
+                                                    0.4: intl.formatMessage({id: 'form.help.precision.step3'}),
+                                                    0.5: intl.formatMessage({id: 'form.help.precision.step4'}),
+                                                    1: intl.formatMessage({id: 'form.help.precision.step5'}),
                                                 }))
                                                 let minKey = 10;
                                                 let selectedLabel;
