@@ -48,7 +48,7 @@ export function Home() {
     const [filteredResult, setFilteredResult] = useState([]);
     const [selectedAuthor, setSelectedAuthor] = useState(undefined)
     const [publications, setPublications] = useState([]);
-    const [precision, setPrecision] = useState(0.05);
+    const [precision, setPrecision] = useState(0.2);
     const [name, setName] = useState('');
     const [color, setColor] = useState("000000");
     const [adaModel, setAdaModel] = useState(false);
@@ -292,7 +292,14 @@ export function Home() {
                                     <Stack direction="column">
                                         <LangSwitcher/>
                                         <Stack direction="row" justifyContent="center" alignItems="center">
-                                            <HelpTooltip msgKey={"bert-model"}/>
+                                            <HelpTooltip msgKey={"bert-model"}>
+                                                <Typography variant="caption"><a href="http://arxiv.org/abs/1908.10084"
+                                                                                 target="_blank" rel="noreferrer">Reimers,
+                                                    Nils et al. "Sentence-BERT: Sentence Embeddings
+                                                    using Siamese BERT-Networks." Proceedings of the 2019 Conference on
+                                                    Empirical Methods in Natural Language Processing. Association for
+                                                    Computational Linguistics, 2019.</a></Typography>
+                                            </HelpTooltip>
                                             <Typography>S-Bert</Typography>
                                             <StyledSwitch checked={adaModel}
                                                           inputProps={{'aria-label': intl.formatMessage({id: 'form.aria.choose-model'})}}
@@ -388,7 +395,7 @@ export function Home() {
                                 <Grid item md={4} xs={12}><Stack direction="row" alignItems="center"
                                                                  justifyContent="center"
                                                                  spacing={1}>
-                                    <HelpTooltip msgKey={"include-coauthors"}/>
+                                    <HelpTooltip msgKey={"exclude-coauthors"}/>
                                     {!includeCoAuthors && <BsPersonFill fontSize="28px"/>}
                                     {includeCoAuthors && <BsPerson fontSize="28px"/>}
                                     <StyledSwitch checked={includeCoAuthors}
@@ -396,7 +403,7 @@ export function Home() {
                                                   onChange={() => setIncludeCoAuthors(!includeCoAuthors)}/>
                                     {includeCoAuthors && <BsPeopleFill fontSize="28px"/>}
                                     {!includeCoAuthors && <BsPeople fontSize="28px"/>}
-                                    <HelpTooltip msgKey={"exclude-coauthors"}/>
+                                    <HelpTooltip msgKey={"include-coauthors"}/>
                                 </Stack></Grid>
 
                             </Grid>
