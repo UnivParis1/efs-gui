@@ -6,7 +6,7 @@ import {
     CardContent,
     CardMedia,
     Container,
-    Fade,
+    Fade, FormControl, FormHelperText,
     Grid,
     IconButton,
     Slider,
@@ -39,6 +39,8 @@ const COLORS = ["c89108", "927b4b", "6b6760", "46546C", "00326e", "e55302", "9f5
 
 
 const CODE_LENGTH = 4;
+
+const MAX_SENTENCE_LENGTH = 400;
 
 export function Home() {
     const intl = useIntl();
@@ -321,25 +323,31 @@ export function Home() {
                             </Grid>
                             <Grid container spacing={theme.spacing(2)}>
                                 <Grid item md={adaModel ? 8 : 12} xs={12}>
-                                    <TextField
-                                        id="outlined-multiline-static"
-                                        label={<div>
-                                            <Typography variant="caption">
-                                                <FormattedMessage id="form.aria.placeholder"/>
-                                            </Typography>
-                                        </div>}
-                                        multiline
-                                        rows={!large ? 2 : (adaModel ? 8 : 2)}
-                                        value={sentence}
-                                        onChange={e => {
-                                            setSentence(e.target.value);
-                                        }}
-                                        fullWidth
+                                    <FormControl fullWidth sx={{
+                                        my: {md: theme.spacing(3)}
+                                    }}>
+                                        <TextField
+                                            id="outlined-multiline-static"
+                                            label={<div>
+                                                <Typography variant="caption">
+                                                    <FormattedMessage id="form.aria.placeholder"/>
+                                                </Typography>
+                                            </div>}
+                                            multiline
+                                            rows={!large ? 2 : (adaModel ? 8 : 2)}
+                                            value={sentence}
+                                            onChange={e => {
+                                                setSentence(e.target.value);
+                                            }}
 
-                                        sx={{
-                                            my: {md: theme.spacing(3)}, backgroundColor: "#FFFFFF"
-                                        }}
-                                    /></Grid>{adaModel && captcha}
+                                            inputProps={{maxLength: MAX_SENTENCE_LENGTH}}
+                                            sx={{
+                                                backgroundColor: "#FFFFFF"
+                                            }}
+                                        />
+                                        <FormHelperText id="form-helper-text"
+                                                        sx={{textAlign: "right"}}>{`${sentence.length} cars / ${MAX_SENTENCE_LENGTH}`}</FormHelperText>
+                                    </FormControl></Grid>{adaModel && captcha}
                             </Grid>
                             <Grid container direction="row" pb={2} pt={{xs: 2, md: 0}}>
                                 <Grid item md={4} xs={9}>
