@@ -1,8 +1,25 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Container, Grid, IconButton, Slider, Snackbar, Stack, TextField, Typography, useTheme} from "@mui/material";
+import {
+    Button,
+    Card,
+    CardActions,
+    CardContent,
+    CardMedia,
+    Container,
+    Grid,
+    IconButton,
+    Slider,
+    Snackbar,
+    Stack,
+    TextField,
+    Typography,
+    useMediaQuery,
+    useTheme
+} from "@mui/material";
 import axios from "axios";
 import isStringBlank from "is-string-blank"
 import ReactWordcloud from "react-wordcloud";
+import RICIBs from 'react-individual-character-input-boxes';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import env from "react-dotenv";
 import PublicationsAccordions from "./PublicationsAccordion";
@@ -19,9 +36,12 @@ import ResultsList from "../commons/ResultsList";
 const COLORS = ["c89108", "927b4b", "6b6760", "46546C", "00326e", "e55302", "9f5740", "765458", "394a59", "00326e"];
 
 
+const CODE_LENGTH = 4;
+
 export function Home() {
     const intl = useIntl();
     const theme = useTheme();
+    const large = useMediaQuery((theme) => theme.breakpoints.up('sm'));
     const [sentence, setSentence] = useState('');
     const [submit, setSubmit] = useState(false);
     const [result, setResult] = useState([]);
@@ -37,6 +57,9 @@ export function Home() {
     const [validationEnabled, setValidationEnabled] = useState(true);
     const [rateLimitAlert, setRateLimitAlert] = React.useState(false);
     const [errorAlert, setErrorAlert] = React.useState(false);
+    const [errorMessage, setErrorMessage] = React.useState("");
+    const [captchaSalt, setCaptchaSalt] = React.useState(Math.random());
+    const [captchaCode, setCaptchaCode] = React.useState('');
 
     const randomColor = useCallback(() => COLORS[Math.floor(Math.random() * COLORS.length)], [])
 
@@ -45,9 +68,10 @@ export function Home() {
         const fetchData = () => {
             setValidationEnabled(false)
             axios.post(`${env.API_URL}/search`, {
-                sentence: sentence,
-                precision: precision,
-                model: adaModel ? 'ada' : 'sbert'
+                sentence: sentence, precision: precision, model: adaModel ? 'ada' : 'sbert', code: captchaCode
+            }, {
+                withCredentials: true,
+                headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'}
             })
                 .then(response => {
                     setResult(() => {
@@ -64,13 +88,20 @@ export function Home() {
                             }
                         })
                     });
+                    renewCaptcha();
                     setSubmit(false)
                 }).catch(error => {
                 const errorData = error.toJSON();
+                console.log(errorData)
                 if (errorData.status === 429) {
                     setRateLimitAlert(true);
+                } else if (errorData.status === 422) {
+                    setErrorAlert(true);
+                    setErrorMessage("form.error.captcha")
+                    renewCaptcha();
                 } else {
                     setErrorAlert(true);
+                    setErrorMessage("form.error.unknown");
                 }
                 setSubmit(false);
                 setValidationEnabled(true);
@@ -83,7 +114,12 @@ export function Home() {
             setName(undefined)
             fetchData();
         }
-    }, [submit, sentence, precision, randomColor, adaModel])
+    }, [submit, sentence, precision, randomColor, adaModel, captchaCode])
+
+    const renewCaptcha = () => {
+        setCaptchaCode('');
+        setCaptchaSalt(Math.random());
+    }
 
     useEffect(() => {
         if (includeCoAuthors) {
@@ -95,8 +131,8 @@ export function Home() {
     }, [result, includeCoAuthors])
 
     useEffect(() => {
-        setValidationEnabled(!adaModel && sentence && !isStringBlank(sentence))
-    }, [adaModel, sentence])
+        setValidationEnabled(precision && sentence && !isStringBlank(sentence) && !(adaModel && captchaCode.length !== CODE_LENGTH))
+    }, [adaModel, sentence, captchaCode, precision])
 
 
     const sentencePanel = useMemo(() => {
@@ -129,8 +165,7 @@ export function Home() {
 
     const callbacks = useMemo(() => {
         return {
-            onWordClick: wordClickCloud,
-            getWordColor: word => {
+            onWordClick: wordClickCloud, getWordColor: word => {
                 return word.text === name ? "black" : `#${word.color}`;
             },
         }
@@ -151,8 +186,7 @@ export function Home() {
 
     const rateAlertSnack = useMemo(() => {
         return <Snackbar open={rateLimitAlert} autoHideDuration={2000} onClose={handleClose} anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'center',
+            vertical: 'top', horizontal: 'center',
         }}>
             <Alert onClose={handleClose} severity="warning" variant="filled" sx={{width: '100%'}}>
                 <FormattedMessage id="form.error.rate_limit"/>
@@ -162,14 +196,13 @@ export function Home() {
 
     const errorAlertSnack = useMemo(() => {
         return <Snackbar open={errorAlert} autoHideDuration={10000} onClose={handleClose} anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'center',
+            vertical: 'top', horizontal: 'center',
         }}>
             <Alert onClose={handleClose} severity="error" variant="filled" sx={{width: '100%'}}>
-                <FormattedMessage id="form.error.unknown"/>
+                <FormattedMessage id={errorMessage}/>
             </Alert>
         </Snackbar>
-    }, [errorAlert, handleClose])
+    }, [errorAlert, errorMessage, handleClose])
 
     const list = useMemo(() => {
         return <ResultsList
@@ -179,6 +212,38 @@ export function Home() {
             publicationsPanel={sentencePanel}
         />
     }, [filteredResult, sentencePanel, selectedAuthor, wordClickList])
+
+    const captcha = useMemo(() => {
+            return <Grid item md={4} xs={12} mt={{md: 3, xs: 1}} justifyContent={{xs: "center"}}>
+                <Card sx={{maxWidth: {md: 245}}}>
+                    < CardMedia
+                        sx={{height: 80}}
+                        image={`${env.API_URL}/captcha?salt=${captchaSalt}`}
+                        title="green iguana"
+                    />
+                    <CardContent sx={{mb: 0, pb: 0, pt: 0}}>
+                        <Typography gutterBottom variant="body2" component="div">
+                            <FormattedMessage id="form.help.captcha"/>
+                        </Typography>
+                        <RICIBs
+                            amount={CODE_LENGTH}
+                            inputRegExp={/^[A-Za-z0-9]$/}
+                            handleOutputString={setCaptchaCode}
+                            inputProps={
+                                {
+                                    className: "1fa-box",
+                                    style: {"color": "orange", width: "40px"},
+                                    placeholder: "_"
+                                }}
+                        />
+
+                    </CardContent>
+                    <CardActions sx={{justifyContent: "center"}}>
+                        <Button size="medium" onClick={renewCaptcha}>Changer de code</Button>
+                    </CardActions>
+                </Card></Grid>
+        }, [captchaSalt]
+    )
 
     return (<>{rateAlertSnack}
             {errorAlertSnack}
@@ -191,15 +256,10 @@ export function Home() {
                                 variant="h3"
                                 sx={{
                                     margin: {
-                                        md: 1,
-                                        xs: 1
-                                    },
-                                    fontSize: {
-                                        md: "32px",
-                                        sm: "32px",
-                                        xs: "20px"
-                                    },
-                                    color: theme.palette.secondary.contrastText
+                                        md: 1, xs: 1
+                                    }, fontSize: {
+                                        md: "32px", sm: "32px", xs: "20px"
+                                    }, color: theme.palette.secondary.contrastText
                                 }}>
                                 <FormattedMessage
                                     id="home.title"
@@ -243,44 +303,44 @@ export function Home() {
                                     </Stack>
                                 </Grid>
                             </Grid>
-                            <TextField
-                                id="outlined-multiline-static"
-                                label={<div>
-                                    <Typography variant="caption">
-                                        <FormattedMessage id="form.aria.placeholder"/>
-                                    </Typography>
-                                </div>}
-                                multiline
-                                rows={2}
-                                value={sentence}
-                                onChange={e => {
-                                    setValidationEnabled(true)
-                                    setSentence(e.target.value);
-                                }}
-                                fullWidth
+                            <Grid container spacing={theme.spacing(2)}>
+                                <Grid item md={adaModel ? 8 : 12} xs={12}>
+                                    <TextField
+                                        id="outlined-multiline-static"
+                                        label={<div>
+                                            <Typography variant="caption">
+                                                <FormattedMessage id="form.aria.placeholder"/>
+                                            </Typography>
+                                        </div>}
+                                        multiline
+                                        rows={!large ? 2 : (adaModel ? 8 : 2)}
+                                        value={sentence}
+                                        onChange={e => {
+                                            setSentence(e.target.value);
+                                        }}
+                                        fullWidth
 
-                                sx={{
-                                    my: theme.spacing(3), backgroundColor: "#FFFFFF"
-                                }}
-                            />
-                            <Grid container direction="row" pb={2}>
-                                <Grid item md={6} xs={9}>
+                                        sx={{
+                                            my: {md: theme.spacing(3)}, backgroundColor: "#FFFFFF"
+                                        }}
+                                    /></Grid>{adaModel && captcha}
+                            </Grid>
+                            <Grid container direction="row" pb={2} pt={{xs: 2, md: 0}}>
+                                <Grid item md={4} xs={9}>
                                     <Stack direction="row" alignItems="center" sx={{alignContent: "center"}}>
                                         <HtmlTooltip
                                             enterTouchDelay={0}
                                             leaveTouchDelay={5000}
                                             my={theme.spacing(3)}
-                                            title={
-                                                <>
-                                                    <Typography
-                                                        color='inherit'>{intl.formatMessage({id: 'form.tooltip.extension.title'})}</Typography>
-                                                    <p>{intl.formatMessage({id: 'form.tooltip.extension.description'})}</p>
-                                                    <ul>
-                                                        <li>{intl.formatMessage({id: 'form.tooltip.extension.li1'})}</li>
-                                                        <li>{intl.formatMessage({id: 'form.tooltip.extension.li2'})}</li>
-                                                    </ul>
-                                                </>
-                                            }
+                                            title={<>
+                                                <Typography
+                                                    color='inherit'>{intl.formatMessage({id: 'form.tooltip.extension.title'})}</Typography>
+                                                <p>{intl.formatMessage({id: 'form.tooltip.extension.description'})}</p>
+                                                <ul>
+                                                    <li>{intl.formatMessage({id: 'form.tooltip.extension.li1'})}</li>
+                                                    <li>{intl.formatMessage({id: 'form.tooltip.extension.li2'})}</li>
+                                                </ul>
+                                            </>}
                                         >
                                             <IconButton>
                                                 <HelpOutlineIcon/>
@@ -315,7 +375,6 @@ export function Home() {
                                             min={0.1}
                                             max={0.7}
                                             onChange={(e) => {
-                                                setValidationEnabled(true)
                                                 setPrecision(e.target.value);
                                             }}
                                         />
