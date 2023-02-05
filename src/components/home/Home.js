@@ -6,6 +6,7 @@ import {
     CardContent,
     CardMedia,
     Container,
+    Fade,
     Grid,
     IconButton,
     Slider,
@@ -23,7 +24,7 @@ import RICIBs from 'react-individual-character-input-boxes';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import env from "react-dotenv";
 import PublicationsAccordions from "./PublicationsAccordion";
-import {Alert, LoadingButton} from "@mui/lab";
+import {Alert, AlertTitle, LoadingButton} from "@mui/lab";
 import {FormattedMessage, useIntl} from "react-intl";
 import LangSwitcher from "../commons/LangSwitcher";
 import P1Logo from "./P1Logo";
@@ -32,6 +33,7 @@ import {BsPeople, BsPeopleFill, BsPerson, BsPersonFill} from "react-icons/bs";
 import HelpTooltip, {HtmlTooltip} from "../commons/HelpTooltip";
 import {MdCloud, MdOutlineCloud, MdOutlineList, MdOutlineViewList} from "react-icons/md";
 import ResultsList from "../commons/ResultsList";
+import InformationPanel from "../commons/InformationPanel";
 
 const COLORS = ["c89108", "927b4b", "6b6760", "46546C", "00326e", "e55302", "9f5740", "765458", "394a59", "00326e"];
 
@@ -48,7 +50,7 @@ export function Home() {
     const [filteredResult, setFilteredResult] = useState([]);
     const [selectedAuthor, setSelectedAuthor] = useState(undefined)
     const [publications, setPublications] = useState([]);
-    const [precision, setPrecision] = useState(0.05);
+    const [precision, setPrecision] = useState(0.2);
     const [name, setName] = useState('');
     const [color, setColor] = useState("000000");
     const [adaModel, setAdaModel] = useState(false);
@@ -57,6 +59,9 @@ export function Home() {
     const [validationEnabled, setValidationEnabled] = useState(true);
     const [rateLimitAlert, setRateLimitAlert] = React.useState(false);
     const [errorAlert, setErrorAlert] = React.useState(false);
+    const [noResultsAlert, setNoResultsAlert] = React.useState(false);
+    const [displayInfoPanel, setDisplayInfoPanel] = React.useState(true);
+    const [firstDisplay, setFirstDisplay] = React.useState(true);
     const [errorMessage, setErrorMessage] = React.useState("");
     const [captchaSalt, setCaptchaSalt] = React.useState(Math.random());
     const [captchaCode, setCaptchaCode] = React.useState('');
@@ -89,10 +94,11 @@ export function Home() {
                         })
                     });
                     renewCaptcha();
+                    setFirstDisplay(false);
+                    setDisplayInfoPanel(false);
                     setSubmit(false)
                 }).catch(error => {
                 const errorData = error.toJSON();
-                console.log(errorData)
                 if (errorData.status === 429) {
                     setRateLimitAlert(true);
                 } else if (errorData.status === 422) {
@@ -122,12 +128,12 @@ export function Home() {
     }
 
     useEffect(() => {
-        if (includeCoAuthors) {
-            setFilteredResult(result);
-
-        } else {
-            setFilteredResult(result.filter((e) => e.own_inst === "True"))
+        let computedResult = result
+        if (!includeCoAuthors) {
+            computedResult = computedResult.filter((e) => e.own_inst === "True")
         }
+        setFilteredResult(computedResult);
+        setNoResultsAlert(computedResult.length === 0)
     }, [result, includeCoAuthors])
 
     useEffect(() => {
@@ -286,13 +292,23 @@ export function Home() {
                         <Stack direction="column">
                             <Grid container direction="row">
                                 <Grid item md={8} xs={12} sx={{mb: {xs: 2}}}>
-                                    < FormattedMessage id="form.help"/>
+                                    <FormattedMessage id="form.help"/>
+                                    <br/>{!firstDisplay && <Button
+                                    variant="text"
+                                    onClick={() => setDisplayInfoPanel((!displayInfoPanel))}>{intl.formatMessage({id: displayInfoPanel ? "form.help.mask_information" : "form.help.display_information"})}</Button>}
                                 </Grid>
                                 <Grid item md={4} xs={12}>
                                     <Stack direction="column">
                                         <LangSwitcher/>
                                         <Stack direction="row" justifyContent="center" alignItems="center">
-                                            <HelpTooltip msgKey={"bert-model"}/>
+                                            <HelpTooltip msgKey={"bert-model"}>
+                                                <Typography variant="caption"><a href="http://arxiv.org/abs/1908.10084"
+                                                                                 target="_blank" rel="noreferrer">Reimers,
+                                                    Nils et al. "Sentence-BERT: Sentence Embeddings
+                                                    using Siamese BERT-Networks." Proceedings of the 2019 Conference on
+                                                    Empirical Methods in Natural Language Processing. Association for
+                                                    Computational Linguistics, 2019.</a></Typography>
+                                            </HelpTooltip>
                                             <Typography>S-Bert</Typography>
                                             <StyledSwitch checked={adaModel}
                                                           inputProps={{'aria-label': intl.formatMessage({id: 'form.aria.choose-model'})}}
@@ -355,11 +371,11 @@ export function Home() {
                                             valueLabelDisplay="auto"
                                             valueLabelFormat={(value) => {
                                                 const steps = new Map(Object.entries({
-                                                    0.2: "Très précis",
-                                                    0.3: "Précis",
-                                                    0.4: "Approximatif",
-                                                    0.5: "Très approximatif",
-                                                    1: "Aleatoire",
+                                                    0.2: intl.formatMessage({id: 'form.help.precision.step1'}),
+                                                    0.3: intl.formatMessage({id: 'form.help.precision.step2'}),
+                                                    0.4: intl.formatMessage({id: 'form.help.precision.step3'}),
+                                                    0.5: intl.formatMessage({id: 'form.help.precision.step4'}),
+                                                    1: intl.formatMessage({id: 'form.help.precision.step5'}),
                                                 }))
                                                 let minKey = 10;
                                                 let selectedLabel;
@@ -388,7 +404,7 @@ export function Home() {
                                 <Grid item md={4} xs={12}><Stack direction="row" alignItems="center"
                                                                  justifyContent="center"
                                                                  spacing={1}>
-                                    <HelpTooltip msgKey={"include-coauthors"}/>
+                                    <HelpTooltip msgKey={"exclude-coauthors"}/>
                                     {!includeCoAuthors && <BsPersonFill fontSize="28px"/>}
                                     {includeCoAuthors && <BsPerson fontSize="28px"/>}
                                     <StyledSwitch checked={includeCoAuthors}
@@ -396,7 +412,7 @@ export function Home() {
                                                   onChange={() => setIncludeCoAuthors(!includeCoAuthors)}/>
                                     {includeCoAuthors && <BsPeopleFill fontSize="28px"/>}
                                     {!includeCoAuthors && <BsPeople fontSize="28px"/>}
-                                    <HelpTooltip msgKey={"exclude-coauthors"}/>
+                                    <HelpTooltip msgKey={"include-coauthors"}/>
                                 </Stack></Grid>
 
                             </Grid>
@@ -406,20 +422,29 @@ export function Home() {
                 </Grid>
                 <Container maxWidth="md">
                     <Grid container direction="column">
-                        <Grid item md={12} sx={{mt: 2}}><Stack direction="row" alignItems="center"
-                                                               justifyContent="center"
-                                                               spacing={2}>
-                            {displayMode === 'cloud' && <MdCloud fontSize="28px"/>}
-                            {displayMode === 'list' && <MdOutlineCloud fontSize="28px"/>}
-                            <StyledSwitch checked={displayMode === 'list'}
-                                          inputProps={{'aria-label': 'Choose view mode, cloud or list'}}
-                                          onChange={(e) => setDisplayMode(e.target.checked ? 'list' : 'cloud')}/>
-                            {displayMode === 'list' && <MdOutlineViewList fontSize="28px"/>}
-                            {displayMode === 'cloud' && <MdOutlineList fontSize="28px"/>}
-                        </Stack></Grid>
+                        {!noResultsAlert && !displayInfoPanel &&
+                            <Grid item md={12} sx={{mt: 2}}><Stack direction="row" alignItems="center"
+                                                                   justifyContent="center"
+                                                                   spacing={2}>
+                                {displayMode === 'cloud' && <MdCloud fontSize="28px"/>}
+                                {displayMode === 'list' && <MdOutlineCloud fontSize="28px"/>}
+                                <StyledSwitch checked={displayMode === 'list'}
+                                              inputProps={{'aria-label': 'Choose view mode, cloud or list'}}
+                                              onChange={(e) => setDisplayMode(e.target.checked ? 'list' : 'cloud')}/>
+                                {displayMode === 'list' && <MdOutlineViewList fontSize="28px"/>}
+                                {displayMode === 'cloud' && <MdOutlineList fontSize="28px"/>}
+                            </Stack></Grid>}
                         <Grid item md={12} sx={{opacity: submit ? 0.3 : 1, mt: 1, mb: 2}}>
-                            {(displayMode === 'cloud') && cloud}
-                            {(displayMode === 'list') && list}
+                            {displayInfoPanel && <InformationPanel/>}
+                            {noResultsAlert && !displayInfoPanel &&
+                                <Fade in={noResultsAlert && !displayInfoPanel} mountOnEnter
+                                      unmountOnExit={false}>
+                                    <Alert severity="warning">
+                                        <AlertTitle><FormattedMessage id="results.alert.no-results.title"/></AlertTitle>
+                                        <FormattedMessage id="results.alert.no-results.text"/>
+                                    </Alert></Fade>}
+                            {!noResultsAlert && !displayInfoPanel && displayMode === 'cloud' && cloud}
+                            {!noResultsAlert && !displayInfoPanel && displayMode === 'list' && list}
                         </Grid>
                         {(displayMode === 'cloud' && selectedAuthor !== undefined) &&
                             <Grid container direction={"row"}>
