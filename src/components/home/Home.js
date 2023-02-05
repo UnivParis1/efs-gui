@@ -61,6 +61,7 @@ export function Home() {
     const [errorAlert, setErrorAlert] = React.useState(false);
     const [noResultsAlert, setNoResultsAlert] = React.useState(false);
     const [displayInfoPanel, setDisplayInfoPanel] = React.useState(true);
+    const [firstDisplay, setFirstDisplay] = React.useState(true);
     const [errorMessage, setErrorMessage] = React.useState("");
     const [captchaSalt, setCaptchaSalt] = React.useState(Math.random());
     const [captchaCode, setCaptchaCode] = React.useState('');
@@ -93,6 +94,7 @@ export function Home() {
                         })
                     });
                     renewCaptcha();
+                    setFirstDisplay(false);
                     setDisplayInfoPanel(false);
                     setSubmit(false)
                 }).catch(error => {
@@ -290,7 +292,10 @@ export function Home() {
                         <Stack direction="column">
                             <Grid container direction="row">
                                 <Grid item md={8} xs={12} sx={{mb: {xs: 2}}}>
-                                    < FormattedMessage id="form.help"/>
+                                    <FormattedMessage id="form.help"/>
+                                    <br/>{!firstDisplay && <Button
+                                    variant="text"
+                                    onClick={() => setDisplayInfoPanel((!displayInfoPanel))}>{intl.formatMessage({id: displayInfoPanel ? "form.help.mask_information" : "form.help.display_information"})}</Button>}
                                 </Grid>
                                 <Grid item md={4} xs={12}>
                                     <Stack direction="column">
@@ -431,12 +436,13 @@ export function Home() {
                             </Stack></Grid>}
                         <Grid item md={12} sx={{opacity: submit ? 0.3 : 1, mt: 1, mb: 2}}>
                             {displayInfoPanel && <InformationPanel/>}
-                            {noResultsAlert && !displayInfoPanel && <Fade in={noResultsAlert && !displayInfoPanel} mountOnEnter
-                                   unmountOnExit={false}>
-                                <Alert severity="warning">
-                                    <AlertTitle><FormattedMessage id="results.alert.no-results.title"/></AlertTitle>
-                                    <FormattedMessage id="results.alert.no-results.text"/>
-                                </Alert></Fade>}
+                            {noResultsAlert && !displayInfoPanel &&
+                                <Fade in={noResultsAlert && !displayInfoPanel} mountOnEnter
+                                      unmountOnExit={false}>
+                                    <Alert severity="warning">
+                                        <AlertTitle><FormattedMessage id="results.alert.no-results.title"/></AlertTitle>
+                                        <FormattedMessage id="results.alert.no-results.text"/>
+                                    </Alert></Fade>}
                             {!noResultsAlert && !displayInfoPanel && displayMode === 'cloud' && cloud}
                             {!noResultsAlert && !displayInfoPanel && displayMode === 'list' && list}
                         </Grid>
