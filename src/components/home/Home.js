@@ -454,7 +454,7 @@ export function Home() {
                             {!noResultsAlert && !displayInfoPanel && displayMode === 'cloud' && cloud}
                             {!noResultsAlert && !displayInfoPanel && displayMode === 'list' && list}
                         </Grid>
-                        {(displayMode === 'cloud' && selectedAuthor !== undefined) &&
+                        {(displayMode === 'cloud' && selectedAuthor !== undefined && !displayInfoPanel) &&
                             <Grid container direction={"row"}>
                                 <Grid item md={4} xs={12}>
                                     <Typography variant="h5" sx={{color: `#${color}`}} component="div">
@@ -467,7 +467,7 @@ export function Home() {
                                     </Typography>
                                 </Grid>
                             </Grid>}
-                        {(displayMode === 'cloud' && selectedAuthor !== undefined) &&
+                        {(displayMode === 'cloud' && selectedAuthor !== undefined && !displayInfoPanel) &&
                             <Grid item md={12} sx={{padding: 0, mt: 1}}>
                                 {sentencePanel}
                             </Grid>}
