@@ -27,5 +27,7 @@
   "home.subtitle": "Recherche d'expertise assistée par l'intelligence artificielle",
   "form.help.coauthors.exclude": "Limiter aux unités de recherche de Paris 1 Panthéon-Sorbonne",
   "form.help.coauthors.include": "Inclure les coauteurs",
-  "result.help.scoring": "Le degré d'expertise présumé de cet auteur vis à vis de votre requête a été inféré à partir des titres ou résumés de publications ci-dessous :"
+  "result.help.scoring": "Le degré d'expertise présumé de cet auteur vis à vis de votre requête a été inféré à partir des titres ou résumés de publications ci-dessous :",
+  "results.alert.no-results.title": "Votre recherche ne retourne pas de résultats",
+  "results.alert.no-results.text": "Vérifiez la casse et l'orthographe de votre saisie. Vous pouvez aussi reformuler votre sujet, réduire le niveau de précision ou élargir votre recherche au co-auteurs."
 }

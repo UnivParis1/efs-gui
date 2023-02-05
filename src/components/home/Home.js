@@ -6,6 +6,7 @@ import {
     CardContent,
     CardMedia,
     Container,
+    Fade,
     Grid,
     IconButton,
     Slider,
@@ -23,7 +24,7 @@ import RICIBs from 'react-individual-character-input-boxes';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import env from "react-dotenv";
 import PublicationsAccordions from "./PublicationsAccordion";
-import {Alert, LoadingButton} from "@mui/lab";
+import {Alert, AlertTitle, LoadingButton} from "@mui/lab";
 import {FormattedMessage, useIntl} from "react-intl";
 import LangSwitcher from "../commons/LangSwitcher";
 import P1Logo from "./P1Logo";
@@ -32,6 +33,7 @@ import {BsPeople, BsPeopleFill, BsPerson, BsPersonFill} from "react-icons/bs";
 import HelpTooltip, {HtmlTooltip} from "../commons/HelpTooltip";
 import {MdCloud, MdOutlineCloud, MdOutlineList, MdOutlineViewList} from "react-icons/md";
 import ResultsList from "../commons/ResultsList";
+import InformationPanel from "../commons/InformationPanel";
 
 const COLORS = ["c89108", "927b4b", "6b6760", "46546C", "00326e", "e55302", "9f5740", "765458", "394a59", "00326e"];
 
@@ -57,6 +59,8 @@ export function Home() {
     const [validationEnabled, setValidationEnabled] = useState(true);
     const [rateLimitAlert, setRateLimitAlert] = React.useState(false);
     const [errorAlert, setErrorAlert] = React.useState(false);
+    const [noResultsAlert, setNoResultsAlert] = React.useState(false);
+    const [displayInfoPanel, setDisplayInfoPanel] = React.useState(true);
     const [errorMessage, setErrorMessage] = React.useState("");
     const [captchaSalt, setCaptchaSalt] = React.useState(Math.random());
     const [captchaCode, setCaptchaCode] = React.useState('');
@@ -89,10 +93,10 @@ export function Home() {
                         })
                     });
                     renewCaptcha();
+                    setDisplayInfoPanel(false);
                     setSubmit(false)
                 }).catch(error => {
                 const errorData = error.toJSON();
-                console.log(errorData)
                 if (errorData.status === 429) {
                     setRateLimitAlert(true);
                 } else if (errorData.status === 422) {
@@ -122,12 +126,12 @@ export function Home() {
     }
 
     useEffect(() => {
-        if (includeCoAuthors) {
-            setFilteredResult(result);
-
-        } else {
-            setFilteredResult(result.filter((e) => e.own_inst === "True"))
+        let computedResult = result
+        if (!includeCoAuthors) {
+            computedResult = computedResult.filter((e) => e.own_inst === "True")
         }
+        setFilteredResult(computedResult);
+        setNoResultsAlert(computedResult.length === 0)
     }, [result, includeCoAuthors])
 
     useEffect(() => {
@@ -413,20 +417,28 @@ export function Home() {
                 </Grid>
                 <Container maxWidth="md">
                     <Grid container direction="column">
-                        <Grid item md={12} sx={{mt: 2}}><Stack direction="row" alignItems="center"
-                                                               justifyContent="center"
-                                                               spacing={2}>
-                            {displayMode === 'cloud' && <MdCloud fontSize="28px"/>}
-                            {displayMode === 'list' && <MdOutlineCloud fontSize="28px"/>}
-                            <StyledSwitch checked={displayMode === 'list'}
-                                          inputProps={{'aria-label': 'Choose view mode, cloud or list'}}
-                                          onChange={(e) => setDisplayMode(e.target.checked ? 'list' : 'cloud')}/>
-                            {displayMode === 'list' && <MdOutlineViewList fontSize="28px"/>}
-                            {displayMode === 'cloud' && <MdOutlineList fontSize="28px"/>}
-                        </Stack></Grid>
+                        {!noResultsAlert && !displayInfoPanel &&
+                            <Grid item md={12} sx={{mt: 2}}><Stack direction="row" alignItems="center"
+                                                                   justifyContent="center"
+                                                                   spacing={2}>
+                                {displayMode === 'cloud' && <MdCloud fontSize="28px"/>}
+                                {displayMode === 'list' && <MdOutlineCloud fontSize="28px"/>}
+                                <StyledSwitch checked={displayMode === 'list'}
+                                              inputProps={{'aria-label': 'Choose view mode, cloud or list'}}
+                                              onChange={(e) => setDisplayMode(e.target.checked ? 'list' : 'cloud')}/>
+                                {displayMode === 'list' && <MdOutlineViewList fontSize="28px"/>}
+                                {displayMode === 'cloud' && <MdOutlineList fontSize="28px"/>}
+                            </Stack></Grid>}
                         <Grid item md={12} sx={{opacity: submit ? 0.3 : 1, mt: 1, mb: 2}}>
-                            {(displayMode === 'cloud') && cloud}
-                            {(displayMode === 'list') && list}
+                            {displayInfoPanel && <InformationPanel/>}
+                            {noResultsAlert && !displayInfoPanel && <Fade in={noResultsAlert && !displayInfoPanel} mountOnEnter
+                                   unmountOnExit={false}>
+                                <Alert severity="warning">
+                                    <AlertTitle><FormattedMessage id="results.alert.no-results.title"/></AlertTitle>
+                                    <FormattedMessage id="results.alert.no-results.text"/>
+                                </Alert></Fade>}
+                            {!noResultsAlert && !displayInfoPanel && displayMode === 'cloud' && cloud}
+                            {!noResultsAlert && !displayInfoPanel && displayMode === 'list' && list}
                         </Grid>
                         {(displayMode === 'cloud' && selectedAuthor !== undefined) &&
                             <Grid container direction={"row"}>
