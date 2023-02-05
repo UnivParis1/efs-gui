@@ -14,8 +14,7 @@ const ResultsList = ({authors, onClick, publicationsPanel, selectedAuthor}) => {
             const labelId = `checkbox-list-label-${author.identifier}`;
 
             return (
-                <><ListItem
-                    key={`result-list-entry-${author.identifier}`}
+                <React.Fragment key={`result-list-entry-${author.identifier}`}><ListItem
                     onClick={() => {
                         onClick(author);
                     }}
@@ -33,7 +32,7 @@ const ResultsList = ({authors, onClick, publicationsPanel, selectedAuthor}) => {
                 </ListItem>
                     <Collapse in={selectedAuthor === author.identifier} mountOnEnter
                               unmountOnExit>{publicationsPanel}</Collapse>
-                </>
+                </React.Fragment>
             );
         })}
     </List>
