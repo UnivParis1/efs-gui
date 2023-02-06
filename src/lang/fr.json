@@ -1,5 +1,6 @@
 {
   "home.title": "Rechercher une expertise",
+  "home.offline.message": "L'application est actuellement hors-ligne pour maintenance. Nous nous efforçons de resraurer le service dans les meilleurs délais ",
   "form.aria.choose-model": "Choisissez votre modèle de langage, Bert ou GPT-3",
   "form.aria.placeholder": "Ex. L'animal dans les rites funéraires à l'âge du fer;Corporate governance and Corporate Social Responsibility.",
   "form.error.rate_limit": "Le nombre de requêtes par minute est limité.",

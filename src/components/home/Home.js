@@ -22,7 +22,6 @@ import isStringBlank from "is-string-blank"
 import ReactWordcloud from "react-wordcloud";
 import RICIBs from 'react-individual-character-input-boxes';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import env from "react-dotenv";
 import PublicationsAccordions from "./PublicationsAccordion";
 import {Alert, AlertTitle, LoadingButton} from "@mui/lab";
 import {FormattedMessage, useIntl} from "react-intl";
@@ -67,14 +66,23 @@ export function Home() {
     const [errorMessage, setErrorMessage] = React.useState("");
     const [captchaSalt, setCaptchaSalt] = React.useState(Math.random());
     const [captchaCode, setCaptchaCode] = React.useState('');
+    const [offlineMessage, setOfflineMessage] = React.useState(false);
 
     const randomColor = useCallback(() => COLORS[Math.floor(Math.random() * COLORS.length)], [])
+
+    useEffect(() => {
+        if (process.env.REACT_APP_APP_STATE === 'offline') {
+            setOfflineMessage(true)
+            setErrorAlert(true)
+            setErrorMessage("home.offline.message")
+        }
+    }, [])
 
 
     useEffect(() => {
         const fetchData = () => {
             setValidationEnabled(false)
-            axios.post(`${env.API_URL}/search`, {
+            axios.post(`${process.env.REACT_APP_API_URL}/search`, {
                 sentence: sentence, precision: precision, model: adaModel ? 'ada' : 'sbert', code: captchaCode
             }, {
                 withCredentials: true,
@@ -139,8 +147,8 @@ export function Home() {
     }, [result, includeCoAuthors])
 
     useEffect(() => {
-        setValidationEnabled(precision && sentence && !isStringBlank(sentence) && !(adaModel && captchaCode.length !== CODE_LENGTH))
-    }, [adaModel, sentence, captchaCode, precision])
+        setValidationEnabled(precision && sentence && !isStringBlank(sentence) && !(adaModel && captchaCode.length !== CODE_LENGTH) && !offlineMessage)
+    }, [adaModel, sentence, captchaCode, precision, offlineMessage])
 
 
     const sentencePanel = useMemo(() => {
@@ -226,7 +234,7 @@ export function Home() {
                 <Card sx={{maxWidth: {md: 245}}}>
                     < CardMedia
                         sx={{height: 80}}
-                        image={`${env.API_URL}/captcha?salt=${captchaSalt}`}
+                        image={`${process.env.REACT_APP_API_URL}/captcha?salt=${captchaSalt}`}
                         title="green iguana"
                     />
                     <CardContent sx={{mb: 0, pb: 0, pt: 0}}>
@@ -271,7 +279,7 @@ export function Home() {
                                 }}>
                                 <FormattedMessage
                                     id="home.title"
-                                /></Typography></Grid>
+                                />{process.env.REACT_APP_STATE}</Typography></Grid>
                             <Grid item md={1} xs={2} sx={{marginLeft: 1, marginRight: 2}}>
                                 <P1Logo width="100%" alt="Paris 1 Panthéon-Sorbonne"/>
                             </Grid>
