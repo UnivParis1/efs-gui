@@ -243,11 +243,11 @@ export function Home() {
             return <Grid item md={4} xs={12} mt={{md: 3, xs: 1}} justifyContent={{xs: "center"}}>
                 <Card sx={{maxWidth: {md: 245}}}>
                     < CardMedia
-                        sx={{height: 80}}
+                        sx={{height: 110}}
                         image={`${process.env.REACT_APP_API_URL}/captcha?salt=${captchaSalt}`}
                         title="green iguana"
                     />
-                    <CardContent sx={{mb: 0, pb: 0, pt: 0}}>
+                    <CardContent sx={{mb: 0, pb: 0, pt: 0, textAlign: 'center'}} >
                         <Typography gutterBottom variant="body2" component="div">
                             <FormattedMessage id="form.help.captcha"/>
                         </Typography>
