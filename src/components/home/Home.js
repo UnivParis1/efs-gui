@@ -1,12 +1,16 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
+    Alert,
+    AlertTitle,
     Button,
     Card,
     CardActions,
     CardContent,
     CardMedia,
     Container,
-    Fade, FormControl, FormHelperText,
+    Fade,
+    FormControl,
+    FormHelperText,
     Grid,
     IconButton,
     Slider,
@@ -23,7 +27,7 @@ import ReactWordcloud from "react-wordcloud";
 import RICIBs from 'react-individual-character-input-boxes';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import PublicationsAccordions from "./PublicationsAccordion";
-import {Alert, AlertTitle, LoadingButton} from "@mui/lab";
+import {LoadingButton} from "@mui/lab";
 import {FormattedMessage, useIntl} from "react-intl";
 import LangSwitcher from "../commons/LangSwitcher";
 import P1Logo from "./P1Logo";
@@ -64,17 +68,17 @@ export function Home() {
     const [displayInfoPanel, setDisplayInfoPanel] = React.useState(true);
     const [firstDisplay, setFirstDisplay] = React.useState(true);
     const [errorMessage, setErrorMessage] = React.useState("");
+    const [maintenanceMessage, setMaintenanceMessage] = React.useState(undefined);
     const [captchaSalt, setCaptchaSalt] = React.useState(Math.random());
     const [captchaCode, setCaptchaCode] = React.useState('');
-    const [offlineMessage, setOfflineMessage] = React.useState(false);
+    const [offlineApp, setOfflineApp] = React.useState(false);
 
     const randomColor = useCallback(() => COLORS[Math.floor(Math.random() * COLORS.length)], [])
 
     useEffect(() => {
         if (process.env.REACT_APP_APP_STATE === 'offline') {
-            setOfflineMessage(true)
-            setErrorAlert(true)
-            setErrorMessage("home.offline.message")
+            setOfflineApp(true)
+            setMaintenanceMessage("home.offline.message")
         }
     }, [])
 
@@ -147,8 +151,8 @@ export function Home() {
     }, [result, includeCoAuthors])
 
     useEffect(() => {
-        setValidationEnabled(precision && sentence && !isStringBlank(sentence) && !(adaModel && captchaCode.length !== CODE_LENGTH) && !offlineMessage)
-    }, [adaModel, sentence, captchaCode, precision, offlineMessage])
+        setValidationEnabled(precision && sentence && !isStringBlank(sentence) && !(adaModel && captchaCode.length !== CODE_LENGTH) && !offlineApp)
+    }, [adaModel, sentence, captchaCode, precision, offlineApp])
 
 
     const sentencePanel = useMemo(() => {
@@ -220,6 +224,12 @@ export function Home() {
         </Snackbar>
     }, [errorAlert, errorMessage, handleClose])
 
+    const maintenanceAlert = useMemo(() => {
+        return <Alert severity="error" variant="filled" sx={{width: '100%', justifyContent: 'center', borderRadius: 0}}>
+            <FormattedMessage id={maintenanceMessage}/>
+        </Alert>
+    }, [maintenanceMessage])
+
     const list = useMemo(() => {
         return <ResultsList
             authors={filteredResult}
@@ -261,7 +271,8 @@ export function Home() {
         }, [captchaSalt]
     )
 
-    return (<>{rateAlertSnack}
+    return (<>{maintenanceMessage && maintenanceAlert}
+            {rateAlertSnack}
             {errorAlertSnack}
             <Grid container spacing={0}>
                 <Grid item md={12} bgcolor={theme.palette.secondary.dark}>
