@@ -1,6 +1,5 @@
 {
     "home.title": "AI Powered expert finder system",
-    "home.offline.message": "The application is currently offline due to scheduled maintenance. We are working to restore the service as quickly as possible.",
     "form.help": "Please enter a sentence (subject, research or article project...) in the language of your choice. The text is case sensitive.",
     "form.aria.choose-model": "Choose your language model, Bert or GPT-3",
     "form.aria.placeholder": "Ex. The animal in the funeral rites of the Iron Age; Corporate governance and Corporate Social Responsibility.",
@@ -42,5 +41,6 @@
     "form.tooltip.exclude-coauthors.title": "Exclude co-authors",
     "form.tooltip.exclude-coauthors.description": "This option limits the research results to researchers from laboratories under the supervision of the University of Paris 1 Panthéon-Sorbonne, excluding co-authors of their publications who are not members of these units.",
     "results.alert.no-results.title": "Your search did not return any results",
-    "results.alert.no-results.text": "Check the case and spelling of your entry. You can also rephrase your topic, reduce the level of detail or expand your search to include co-authors."
+    "results.alert.no-results.text": "Check the case and spelling of your entry. You can also rephrase your topic, reduce the level of detail or expand your search to include co-authors.",
+    "home.offline.message": "The application is currently offline due to scheduled maintenance. We are working to restore the service as quickly as possible."
 }
