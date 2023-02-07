@@ -14,7 +14,7 @@ export const HtmlTooltip = styled(({className, ...props}) => (
         border: '1px solid #dadde9',
     },
 }));
-const HelpTooltip = ({msgKey, ...props}) => {
+const HelpTooltip = ({msgKey, children, ...props}) => {
     const intl = useIntl();
     return <HtmlTooltip
         enterTouchDelay={0}
@@ -25,6 +25,7 @@ const HelpTooltip = ({msgKey, ...props}) => {
                 <Typography
                     color='inherit'>{intl.formatMessage({id: `form.tooltip.${msgKey}.title`})}</Typography>
                 <p>{intl.formatMessage({id: `form.tooltip.${msgKey}.description`})}</p>
+                {children}
             </>
         }
     >
