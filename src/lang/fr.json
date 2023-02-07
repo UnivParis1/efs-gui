@@ -22,6 +22,7 @@
     "form.help.precision.step3": "Approximatif",
     "form.help.precision.step4": "Très approximatif",
     "form.help.precision.step5": "Aleatoire",
+    "form.help.search.button": "Rechercher",
     "form.info.panel.title1": "Qu'est-ce que l'outil de recherche d'expertise de l'université Paris 1 Panthéon-Sorbonne ?",
     "form.info.panel.desc1": "Cette application utilise l'intelligence artificielle pour vous aider à identifier les chercheurs et les chercheuses de l'université Paris 1 Panthéon-Sorbonne qui travaillent sur les thèmes les plus proches de l'énoncé que vous aurez saisi. Elle pourra vous servir notamment à identifier des expertises en lien avec un projet d'article de presse, à solliciter des participants potentiels pour un évènement ou encore, à rechercher un directeur pour une thèse ou un mémoire.",
     "form.info.panel.title2": "Comment utiliser cet outil ?",
