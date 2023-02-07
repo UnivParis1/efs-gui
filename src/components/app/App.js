@@ -27,7 +27,7 @@ function App() {
             primary: {
                 main: '#c89110',
                 light: '#f6f1ee',
-                dark: '#80003e',
+                dark: '#999897',
                 contrastText: '#ffffff',
             },
             secondary: {

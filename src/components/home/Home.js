@@ -6,7 +6,7 @@ import {
     Card,
     CardActions,
     CardContent,
-    CardMedia,
+    CardMedia, Chip,
     Container,
     Fade,
     FormControl,
@@ -34,7 +34,7 @@ import P1Logo from "./P1Logo";
 import StyledSwitch from "../commons/StyledSwitch";
 import {BsPeople, BsPeopleFill, BsPerson, BsPersonFill} from "react-icons/bs";
 import HelpTooltip, {HtmlTooltip} from "../commons/HelpTooltip";
-import {MdCloud, MdOutlineCloud, MdOutlineList, MdOutlineViewList} from "react-icons/md";
+import {MdCloud, MdOutlineCloud, MdOutlineList, MdOutlineSearch, MdOutlineViewList} from "react-icons/md";
 import ResultsList from "../commons/ResultsList";
 import InformationPanel from "../commons/InformationPanel";
 
@@ -247,7 +247,7 @@ export function Home() {
                         image={`${process.env.REACT_APP_API_URL}/captcha?salt=${captchaSalt}`}
                         title="green iguana"
                     />
-                    <CardContent sx={{mb: 0, pb: 0, pt: 0, textAlign: 'center'}} >
+                    <CardContent sx={{mb: 0, pb: 0, pt: 0, textAlign: 'center'}}>
                         <Typography gutterBottom variant="body2" component="div">
                             <FormattedMessage id="form.help.captcha"/>
                         </Typography>
@@ -278,19 +278,26 @@ export function Home() {
                 <Grid item md={12} bgcolor={theme.palette.secondary.dark}>
                     <Container maxWidth="md">
                         <Grid container direction="row" alignItems="center">
-                            <Grid item md={6} xs={5} sx={{display: {xs: "none", sm: "block"}}}><Typography
-                                component="h1"
-                                variant="h3"
-                                sx={{
-                                    margin: {
-                                        md: 1, xs: 1
-                                    }, fontSize: {
-                                        md: "32px", sm: "32px", xs: "20px"
-                                    }, color: theme.palette.secondary.contrastText
-                                }}>
-                                <FormattedMessage
-                                    id="home.title"
-                                />{process.env.REACT_APP_STATE}</Typography></Grid>
+                            <Grid item md={6} xs={5} sx={{display: {xs: "none", sm: "block"}}}>
+                                <Stack direction="row"><Typography
+                                    component="h1"
+                                    variant="h3"
+                                    sx={{
+                                        fontWeight: "bold",
+                                        margin: {
+                                            md: 1, xs: 1
+                                        }, fontSize: {
+                                            md: "30px", sm: "32px", xs: "20px"
+                                        }, color: theme.palette.secondary.contrastText
+                                    }}>
+                                    <FormattedMessage
+                                        id="home.title"
+                                    />{process.env.REACT_APP_STATE}</Typography><Chip label="bêta" size="small"
+                                                                                      sx={{
+                                                                                          backgroundColor: theme.palette.secondary.contrastText,
+                                                                                          color: theme.palette.secondary.dark
+                                                                                      }}
+                                                                                      variant="filled"/></Stack> </Grid>
                             <Grid item md={1} xs={2} sx={{marginLeft: 1, marginRight: 2}}>
                                 <P1Logo width="100%" alt="Paris 1 Panthéon-Sorbonne"/>
                             </Grid>
@@ -358,7 +365,6 @@ export function Home() {
                                             onChange={e => {
                                                 setSentence(e.target.value);
                                             }}
-
                                             inputProps={{maxLength: MAX_SENTENCE_LENGTH}}
                                             sx={{
                                                 backgroundColor: "#FFFFFF"
@@ -368,9 +374,9 @@ export function Home() {
                                                         sx={{textAlign: "right"}}>{`${sentence.length} cars / ${MAX_SENTENCE_LENGTH}`}</FormHelperText>
                                     </FormControl></Grid>{adaModel && captcha}
                             </Grid>
-                            <Grid container direction="row" pb={2} pt={{xs: 2, md: 0}}>
-                                <Grid item md={4} xs={9}>
-                                    <Stack direction="row" alignItems="center" sx={{alignContent: "center"}}>
+                            <Grid container direction="row" pb={2} pt={{xs: 2, md: 0}} sx={{alignItems: "center"}}>
+                                <Grid item md={4} xs={7}>
+                                    <Stack direction="row" alignItems="center" sx={{alignItems: "center"}}>
                                         <HtmlTooltip
                                             enterTouchDelay={0}
                                             leaveTouchDelay={5000}
@@ -385,11 +391,11 @@ export function Home() {
                                                 </ul>
                                             </>}
                                         >
-                                            <IconButton>
+                                            <IconButton sx={{p: {xs: 0.5}}}>
                                                 <HelpOutlineIcon/>
                                             </IconButton>
                                         </HtmlTooltip>
-                                        <Typography id="input-slider" mr={2} ml={0}>
+                                        <Typography id="input-slider" mr={0.5} ml={0}>
                                             Extension
                                         </Typography>
                                         <Slider
@@ -424,10 +430,13 @@ export function Home() {
 
                                     </Stack>
                                 </Grid>
-                                <Grid item md={2} xs={2} sx={{pl: {xs: theme.spacing(1)}}}><LoadingButton
+                                <Grid item md={2} xs={4}
+                                      sx={{pl: {xs: theme.spacing(1), md: theme.spacing(2)}}}><LoadingButton
                                     onClick={() => setSubmit(true)} loading={submit}
                                     disabled={!validationEnabled}
-                                    variant="contained">Valider</LoadingButton></Grid>
+                                    size="small"
+                                    startIcon={<MdOutlineSearch/>}
+                                    variant="contained"><FormattedMessage id="form.help.search.button"/></LoadingButton></Grid>
                                 <Grid item md={4} xs={12}><Stack direction="row" alignItems="center"
                                                                  justifyContent="center"
                                                                  spacing={1}>
