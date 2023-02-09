@@ -441,13 +441,17 @@ export function Home() {
                                                                  justifyContent="center"
                                                                  spacing={1}>
                                     <HelpTooltip msgKey={"exclude-coauthors"}/>
-                                    {!includeCoAuthors && <BsPersonFill fontSize="28px"/>}
-                                    {includeCoAuthors && <BsPerson fontSize="28px"/>}
+                                    <IconButton onClick={() => setIncludeCoAuthors(false)}>
+                                        {!includeCoAuthors && <BsPersonFill fontSize="28px"/>}
+                                        {includeCoAuthors && <BsPerson fontSize="28px"/>}
+                                    </IconButton>
                                     <StyledSwitch checked={includeCoAuthors}
                                                   inputProps={{'aria-label': 'Limit to Paris 1 Pantheon-Sorbonne authors'}}
                                                   onChange={() => setIncludeCoAuthors(!includeCoAuthors)}/>
-                                    {includeCoAuthors && <BsPeopleFill fontSize="28px"/>}
-                                    {!includeCoAuthors && <BsPeople fontSize="28px"/>}
+                                    <IconButton onClick={() => setIncludeCoAuthors(true)}>
+                                        {includeCoAuthors && <BsPeopleFill fontSize="28px"/>}
+                                        {!includeCoAuthors && <BsPeople fontSize="28px"/>}
+                                    </IconButton>
                                     <HelpTooltip msgKey={"include-coauthors"}/>
                                 </Stack></Grid>
 
