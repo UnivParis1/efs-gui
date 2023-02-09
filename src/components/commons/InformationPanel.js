@@ -13,10 +13,10 @@ const InformationPanel = () => {
             return <Accordion key={`information-panel-section${i}`}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon/>}
-                    aria-controls="panel1a-content"
-                    id="panel1a-header"
+                    aria-controls={`form.info.panel${i}-content`}
+                    id={`form.info.panel${i}-header`}
                 >
-                    <Typography variant="subtitle1"><FormattedMessage
+                    <Typography variant="subtitle1" component="h2"><FormattedMessage
                         id={`form.info.panel.title${i}`}/></Typography>
                 </AccordionSummary>
                 <AccordionDetails>

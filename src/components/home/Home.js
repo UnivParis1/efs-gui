@@ -360,12 +360,17 @@ export function Home() {
                                     }}>
                                         <TextField
                                             id="outlined-multiline-static"
+                                            role="textbox"
                                             label={<div>
                                                 <Typography variant="caption">
                                                     <FormattedMessage id="form.aria.placeholder"/>
                                                 </Typography>
                                             </div>}
+                                            aria-placeholder={intl.formatMessage({id: "form.aria.placeholder"})}
                                             multiline
+                                            aria-multiline="true"
+                                            aria-required="true"
+                                            aria-labelledby="textbox-helper-text"
                                             rows={!large ? 2 : (adaModel ? 8 : 2)}
                                             value={sentence}
                                             onChange={e => {
@@ -376,7 +381,7 @@ export function Home() {
                                                 backgroundColor: "#FFFFFF"
                                             }}
                                         />
-                                        <FormHelperText id="form-helper-text"
+                                        <FormHelperText id="textbox-helper-text"
                                                         sx={{textAlign: "right"}}>{`${sentence.length} cars / ${MAX_SENTENCE_LENGTH}`}</FormHelperText>
                                     </FormControl></Grid>{adaModel && captcha}
                             </Grid>
@@ -386,6 +391,7 @@ export function Home() {
                                         <HtmlTooltip
                                             enterTouchDelay={0}
                                             leaveTouchDelay={5000}
+                                            aria-label={intl.formatMessage({id: "form.tooltip.precision.aria.label"})}
                                             my={theme.spacing(3)}
                                             title={<>
                                                 <Typography
@@ -447,14 +453,16 @@ export function Home() {
                                                                  justifyContent="center"
                                                                  spacing={1}>
                                     <HelpTooltip msgKey={"exclude-coauthors"}/>
-                                    <IconButton onClick={() => setIncludeCoAuthors(false)}>
+                                    <IconButton onClick={() => setIncludeCoAuthors(false)}
+                                                aria-label={intl.formatMessage({id: "form.tooltip.exclude-coauthors.title"})}>
                                         {!includeCoAuthors && <BsPersonFill fontSize="28px"/>}
                                         {includeCoAuthors && <BsPerson fontSize="28px"/>}
                                     </IconButton>
                                     <StyledSwitch checked={includeCoAuthors}
                                                   inputProps={{'aria-label': 'Limit to Paris 1 Pantheon-Sorbonne authors'}}
                                                   onChange={() => setIncludeCoAuthors(!includeCoAuthors)}/>
-                                    <IconButton onClick={() => setIncludeCoAuthors(true)}>
+                                    <IconButton onClick={() => setIncludeCoAuthors(true)}
+                                                aria-label={intl.formatMessage({id: "form.tooltip.include-coauthors.title"})}>
                                         {includeCoAuthors && <BsPeopleFill fontSize="28px"/>}
                                         {!includeCoAuthors && <BsPeople fontSize="28px"/>}
                                     </IconButton>
