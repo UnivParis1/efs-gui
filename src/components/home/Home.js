@@ -13,6 +13,7 @@ import {
     FormHelperText,
     Grid,
     IconButton,
+    Link,
     Slider,
     Snackbar,
     Stack,
@@ -337,11 +338,16 @@ export function Home() {
                                                     Empirical Methods in Natural Language Processing. Association for
                                                     Computational Linguistics, 2019.</a></Typography>
                                             </HelpTooltip>
-                                            <Typography>S-Bert</Typography>
+                                            <Link color="inherit" sx={{textDecoration: "none", cursor: "pointer"}}
+                                                  onClick={() => setAdaModel(false)}>
+                                                <Typography>S-Bert</Typography></Link>
                                             <StyledSwitch checked={adaModel}
                                                           inputProps={{'aria-label': intl.formatMessage({id: 'form.aria.choose-model'})}}
                                                           onChange={() => setAdaModel(!adaModel)}/>
-                                            <Typography>GPT-3</Typography>
+                                            <Link color="inherit" sx={{textDecoration: "none", cursor: "pointer"}}
+                                                  onClick={() => setAdaModel(true)}>
+                                                <Typography>GPT-3</Typography>
+                                            </Link>
                                             <HelpTooltip msgKey={"ada-model"}/>
                                         </Stack>
                                     </Stack>
@@ -466,13 +472,17 @@ export function Home() {
                             <Grid item md={12} sx={{mt: 2}}><Stack direction="row" alignItems="center"
                                                                    justifyContent="center"
                                                                    spacing={2}>
-                                {displayMode === 'cloud' && <MdCloud fontSize="28px"/>}
-                                {displayMode === 'list' && <MdOutlineCloud fontSize="28px"/>}
+                                <IconButton onClick={() => setDisplayMode('cloud')}>
+                                    {displayMode === 'cloud' && <MdCloud fontSize="28px"/>}
+                                    {displayMode === 'list' && <MdOutlineCloud fontSize="28px"/>}
+                                </IconButton>
                                 <StyledSwitch checked={displayMode === 'list'}
                                               inputProps={{'aria-label': 'Choose view mode, cloud or list'}}
                                               onChange={(e) => setDisplayMode(e.target.checked ? 'list' : 'cloud')}/>
-                                {displayMode === 'list' && <MdOutlineViewList fontSize="28px"/>}
-                                {displayMode === 'cloud' && <MdOutlineList fontSize="28px"/>}
+                                <IconButton onClick={() => setDisplayMode('list')}>
+                                    {displayMode === 'list' && <MdOutlineViewList fontSize="28px"/>}
+                                    {displayMode === 'cloud' && <MdOutlineList fontSize="28px"/>}
+                                </IconButton>
                             </Stack></Grid>}
                         <Grid item md={12} sx={{opacity: submit ? 0.3 : 1, mt: 1, mb: 2}}>
                             {displayInfoPanel && <InformationPanel/>}
