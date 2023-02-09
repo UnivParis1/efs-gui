@@ -35,7 +35,7 @@ import P1Logo from "./P1Logo";
 import StyledSwitch from "../commons/StyledSwitch";
 import {BsPeople, BsPeopleFill, BsPerson, BsPersonFill} from "react-icons/bs";
 import HelpTooltip, {HtmlTooltip} from "../commons/HelpTooltip";
-import {MdCloud, MdOutlineCloud, MdOutlineList, MdOutlineSearch, MdOutlineViewList} from "react-icons/md";
+import {MdClear, MdCloud, MdOutlineCloud, MdOutlineList, MdOutlineSearch, MdOutlineViewList} from "react-icons/md";
 import ResultsList from "../commons/ResultsList";
 import InformationPanel from "../commons/InformationPanel";
 
@@ -376,11 +376,21 @@ export function Home() {
                                             onChange={e => {
                                                 setSentence(e.target.value);
                                             }}
-                                            inputProps={{maxLength: MAX_SENTENCE_LENGTH}}
-                                            sx={{
-                                                backgroundColor: "#FFFFFF"
+                                            InputProps={{
+                                                endAdornment: (<IconButton
+                                                    role="button"
+                                                    aria-label={intl.formatMessage({id: "form.help.clear.textbox"})}
+                                                    sx={{visibility: isStringBlank(sentence) ? "hidden" : "visible"}}
+                                                    onClick={() => setSentence('')}
+                                                >
+                                                    <MdClear/>
+                                                </IconButton>),
+                                                maxLength: MAX_SENTENCE_LENGTH
                                             }}
-                                        />
+                                            sx={{
+                                                backgroundColor: "#FFFFFF",
+                                                "& .Mui-focused .MuiIconButton-root": {color: "primary.main"},
+                                            }}/>
                                         <FormHelperText id="textbox-helper-text"
                                                         sx={{textAlign: "right"}}>{`${sentence.length} cars / ${MAX_SENTENCE_LENGTH}`}</FormHelperText>
                                     </FormControl></Grid>{adaModel && captcha}

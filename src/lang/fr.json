@@ -16,6 +16,7 @@
   "form.error.unknown": "Nous sommes désolés, un problème est survenu : veuillez réessayer ultérieurement..",
   "form.help.captcha": "Veuillez saisir le code ci-dessus.",
   "form.help.mask_information": "Masquer les informations",
+  "form.help.clear.textbox": "Effacer le texte",
   "form.help.display_information": "En savoir plus",
   "form.help.precision.step1": "Très précis",
   "form.help.precision.step2": "Précis",

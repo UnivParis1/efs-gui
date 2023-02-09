@@ -16,6 +16,7 @@
   "form.error.unknown": "We are sorry, a problem has occurred: please try again later.",
   "form.help.captcha": "Please enter the code above.",
   "form.help.mask_information": "Hide information",
+  "form.help.clear.textbox": "Clear text",
   "form.help.display_information": "Read more",
   "form.help.precision.step1": "Very precise",
   "form.help.precision.step2": "Precise",
