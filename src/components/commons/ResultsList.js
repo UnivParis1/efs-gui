@@ -18,6 +18,11 @@ const ResultsList = ({authors, onClick, publicationsPanel, selectedAuthor}) => {
                     onClick={() => {
                         onClick(author);
                     }}
+                    onKeyDown={(e) => {
+                        if ([32, 13].includes(e.keyCode)) {
+                            onClick(author);
+                        }
+                    }}
                     disablePadding
                 >
                     <ListItemButton role={undefined} dense>

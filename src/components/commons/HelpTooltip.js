@@ -19,6 +19,7 @@ const HelpTooltip = ({msgKey, children, ...props}) => {
     return <HtmlTooltip
         enterTouchDelay={0}
         leaveTouchDelay={5000}
+        aria-label={intl.formatMessage({id: 'form.tooltip.aria.label.prefix'}) + " : " + intl.formatMessage({id: `form.tooltip.${msgKey}.title`})}
         {...props}
         title={
             <>
