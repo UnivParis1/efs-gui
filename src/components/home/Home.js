@@ -13,6 +13,7 @@ import {
     FormHelperText,
     Grid,
     IconButton,
+    Link,
     Slider,
     Snackbar,
     Stack,
@@ -34,7 +35,7 @@ import P1Logo from "./P1Logo";
 import StyledSwitch from "../commons/StyledSwitch";
 import {BsPeople, BsPeopleFill, BsPerson, BsPersonFill} from "react-icons/bs";
 import HelpTooltip, {HtmlTooltip} from "../commons/HelpTooltip";
-import {MdCloud, MdOutlineCloud, MdOutlineList, MdOutlineSearch, MdOutlineViewList} from "react-icons/md";
+import {MdClear, MdCloud, MdOutlineCloud, MdOutlineList, MdOutlineSearch, MdOutlineViewList} from "react-icons/md";
 import ResultsList from "../commons/ResultsList";
 import InformationPanel from "../commons/InformationPanel";
 
@@ -274,7 +275,7 @@ export function Home() {
     return (<>{maintenanceMessage && maintenanceAlert}
             {rateAlertSnack}
             {errorAlertSnack}
-            <Grid container spacing={0}>
+            <Grid container spacing={0} id="main-container">
                 <Grid item md={12} bgcolor={theme.palette.secondary.dark}>
                     <Container maxWidth="md">
                         <Grid container direction="row" alignItems="center">
@@ -285,9 +286,9 @@ export function Home() {
                                     sx={{
                                         fontWeight: "bold",
                                         margin: {
-                                            md: 1, xs: 1
+                                            md: 0.5, xs: 1
                                         }, fontSize: {
-                                            md: "30px", sm: "32px", xs: "20px"
+                                            md: "26px", sm: "32px", xs: "20px"
                                         }, color: theme.palette.secondary.contrastText
                                     }}>
                                     <FormattedMessage
@@ -304,7 +305,7 @@ export function Home() {
                             <Grid item md={4} sm={4} xs={9}>
                                 <Typography variant="h2"
                                             sx={{
-                                                fontSize: {md: "20px", sm: "20px", xs: "16px"},
+                                                fontSize: {md: "18px", sm: "18px", xs: "16px"},
                                                 color: theme.palette.secondary.contrastText
                                             }}>
                                     <FormattedMessage
@@ -337,11 +338,16 @@ export function Home() {
                                                     Empirical Methods in Natural Language Processing. Association for
                                                     Computational Linguistics, 2019.</a></Typography>
                                             </HelpTooltip>
-                                            <Typography>S-Bert</Typography>
+                                            <Link color="inherit" sx={{textDecoration: "none", cursor: "pointer"}}
+                                                  onClick={() => setAdaModel(false)}>
+                                                <Typography>S-Bert</Typography></Link>
                                             <StyledSwitch checked={adaModel}
                                                           inputProps={{'aria-label': intl.formatMessage({id: 'form.aria.choose-model'})}}
                                                           onChange={() => setAdaModel(!adaModel)}/>
-                                            <Typography>GPT-3</Typography>
+                                            <Link color="inherit" sx={{textDecoration: "none", cursor: "pointer"}}
+                                                  onClick={() => setAdaModel(true)}>
+                                                <Typography>GPT-3</Typography>
+                                            </Link>
                                             <HelpTooltip msgKey={"ada-model"}/>
                                         </Stack>
                                     </Stack>
@@ -354,23 +360,38 @@ export function Home() {
                                     }}>
                                         <TextField
                                             id="outlined-multiline-static"
+                                            role="textbox"
                                             label={<div>
                                                 <Typography variant="caption">
                                                     <FormattedMessage id="form.aria.placeholder"/>
                                                 </Typography>
                                             </div>}
+                                            aria-placeholder={intl.formatMessage({id: "form.aria.placeholder"})}
                                             multiline
+                                            aria-multiline="true"
+                                            aria-required="true"
+                                            aria-labelledby="textbox-helper-text"
                                             rows={!large ? 2 : (adaModel ? 8 : 2)}
                                             value={sentence}
                                             onChange={e => {
                                                 setSentence(e.target.value);
                                             }}
-                                            inputProps={{maxLength: MAX_SENTENCE_LENGTH}}
-                                            sx={{
-                                                backgroundColor: "#FFFFFF"
+                                            InputProps={{
+                                                endAdornment: (<IconButton
+                                                    role="button"
+                                                    aria-label={intl.formatMessage({id: "form.help.clear.textbox"})}
+                                                    sx={{visibility: isStringBlank(sentence) ? "hidden" : "visible"}}
+                                                    onClick={() => setSentence('')}
+                                                >
+                                                    <MdClear/>
+                                                </IconButton>),
+                                                maxLength: MAX_SENTENCE_LENGTH
                                             }}
-                                        />
-                                        <FormHelperText id="form-helper-text"
+                                            sx={{
+                                                backgroundColor: "#FFFFFF",
+                                                "& .Mui-focused .MuiIconButton-root": {color: "primary.main"},
+                                            }}/>
+                                        <FormHelperText id="textbox-helper-text"
                                                         sx={{textAlign: "right"}}>{`${sentence.length} cars / ${MAX_SENTENCE_LENGTH}`}</FormHelperText>
                                     </FormControl></Grid>{adaModel && captcha}
                             </Grid>
@@ -380,6 +401,7 @@ export function Home() {
                                         <HtmlTooltip
                                             enterTouchDelay={0}
                                             leaveTouchDelay={5000}
+                                            aria-label={intl.formatMessage({id: "form.tooltip.precision.aria.label"})}
                                             my={theme.spacing(3)}
                                             title={<>
                                                 <Typography
@@ -441,13 +463,19 @@ export function Home() {
                                                                  justifyContent="center"
                                                                  spacing={1}>
                                     <HelpTooltip msgKey={"exclude-coauthors"}/>
-                                    {!includeCoAuthors && <BsPersonFill fontSize="28px"/>}
-                                    {includeCoAuthors && <BsPerson fontSize="28px"/>}
+                                    <IconButton onClick={() => setIncludeCoAuthors(false)}
+                                                aria-label={intl.formatMessage({id: "form.tooltip.exclude-coauthors.title"})}>
+                                        {!includeCoAuthors && <BsPersonFill fontSize="28px"/>}
+                                        {includeCoAuthors && <BsPerson fontSize="28px"/>}
+                                    </IconButton>
                                     <StyledSwitch checked={includeCoAuthors}
                                                   inputProps={{'aria-label': 'Limit to Paris 1 Pantheon-Sorbonne authors'}}
                                                   onChange={() => setIncludeCoAuthors(!includeCoAuthors)}/>
-                                    {includeCoAuthors && <BsPeopleFill fontSize="28px"/>}
-                                    {!includeCoAuthors && <BsPeople fontSize="28px"/>}
+                                    <IconButton onClick={() => setIncludeCoAuthors(true)}
+                                                aria-label={intl.formatMessage({id: "form.tooltip.include-coauthors.title"})}>
+                                        {includeCoAuthors && <BsPeopleFill fontSize="28px"/>}
+                                        {!includeCoAuthors && <BsPeople fontSize="28px"/>}
+                                    </IconButton>
                                     <HelpTooltip msgKey={"include-coauthors"}/>
                                 </Stack></Grid>
 
@@ -462,13 +490,17 @@ export function Home() {
                             <Grid item md={12} sx={{mt: 2}}><Stack direction="row" alignItems="center"
                                                                    justifyContent="center"
                                                                    spacing={2}>
-                                {displayMode === 'cloud' && <MdCloud fontSize="28px"/>}
-                                {displayMode === 'list' && <MdOutlineCloud fontSize="28px"/>}
+                                <IconButton onClick={() => setDisplayMode('cloud')}>
+                                    {displayMode === 'cloud' && <MdCloud fontSize="28px"/>}
+                                    {displayMode === 'list' && <MdOutlineCloud fontSize="28px"/>}
+                                </IconButton>
                                 <StyledSwitch checked={displayMode === 'list'}
                                               inputProps={{'aria-label': 'Choose view mode, cloud or list'}}
                                               onChange={(e) => setDisplayMode(e.target.checked ? 'list' : 'cloud')}/>
-                                {displayMode === 'list' && <MdOutlineViewList fontSize="28px"/>}
-                                {displayMode === 'cloud' && <MdOutlineList fontSize="28px"/>}
+                                <IconButton onClick={() => setDisplayMode('list')}>
+                                    {displayMode === 'list' && <MdOutlineViewList fontSize="28px"/>}
+                                    {displayMode === 'cloud' && <MdOutlineList fontSize="28px"/>}
+                                </IconButton>
                             </Stack></Grid>}
                         <Grid item md={12} sx={{opacity: submit ? 0.3 : 1, mt: 1, mb: 2}}>
                             {displayInfoPanel && <InformationPanel/>}

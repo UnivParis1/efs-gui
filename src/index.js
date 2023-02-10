@@ -1,18 +1,34 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import createCache from "@emotion/cache";
 import './index.css';
 import App from './components/app/App';
 import reportWebVitals from './reportWebVitals';
 import IntlWrapper from "./components/commons/IntlWrapper";
+import {CacheProvider} from "@emotion/react";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const container = document.querySelector('#root');
+const shadowContainer = container.attachShadow({mode: 'open'});
+const emotionRoot = document.createElement('style');
+const shadowRootElement = document.createElement('div');
+shadowContainer.appendChild(emotionRoot);
+shadowContainer.appendChild(shadowRootElement);
+
+const cache = createCache({
+    key: 'css',
+    prepend: true,
+    container: emotionRoot,
+});
+const root = ReactDOM.createRoot(shadowRootElement);
 
 
 root.render(
     <React.StrictMode>
-        <IntlWrapper>
-            <App/>
-        </IntlWrapper>
+        <CacheProvider value={cache}>
+            <IntlWrapper>
+                <App shadowRootElement={shadowRootElement}/>
+            </IntlWrapper>
+        </CacheProvider>
     </React.StrictMode>
 );
 

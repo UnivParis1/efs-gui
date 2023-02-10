@@ -6,11 +6,28 @@ import Montserrat from '../../fonts/Montserrat/Montserrat-VariableFont_wght.ttf'
 import {Home} from "../home/Home";
 
 
-function App() {
+function App({shadowRootElement}) {
     const theme = createTheme({
         components: {
-            MuiCssBaseline: {
-                styleOverrides: `
+            MuiPopover: {
+                defaultProps: {
+                    container: shadowRootElement,
+                },
+            }, MuiPopper: {
+                defaultProps: {
+                    container: shadowRootElement,
+                },
+            }, MuiModal: {
+                defaultProps: {
+                    container: shadowRootElement,
+                },
+            }, MuiCssBaseline: {
+                defaultProps: {
+                    container: shadowRootElement,
+                }, styleOverrides: `
+                #main-container * {
+    word-break: normal !important;
+}
         @font-face {
           font-family: 'Montserrat';
           font-style: normal;
@@ -21,59 +38,32 @@ function App() {
         }
       `,
             },
-        },
-        palette: {
-            type: 'light',
-            primary: {
-                main: '#c89110',
-                light: '#f6f1ee',
-                dark: '#999897',
-                contrastText: '#ffffff',
+        }, palette: {
+            type: 'light', primary: {
+                main: '#c89110', light: '#f6f1ee', dark: '#999897', contrastText: '#ffffff',
+            }, secondary: {
+                main: '#619afc', light: '#99caff', dark: '#00326e', contrastText: '#ffffff',
+            }, info: {
+                main: '#18ffff', light: '#76ffff', dark: '#00cbcc',
             },
-            secondary: {
-                main: '#619afc',
-                light: '#99caff',
-                dark: '#00326e',
-                contrastText: '#ffffff',
-            },
-            info: {
-                main: '#18ffff',
-                light: '#76ffff',
-                dark: '#00cbcc',
-            },
-        },
-        typography: {
-            fontFamily: 'Montserrat, Arial',
-            h2: {
-                lineHeight: 1,
-                fontWeight: '500',
-                fontSize: "3rem",
-            },
-            h3: {
-                lineHeight: 1,
-                fontWeight: '500',
-                fontSize: "3rem",
-            },
-            h4: {
-                lineHeight: 1,
-                fontWeight: '500',
-                fontSize: "2rem",
-            },
-            subtitle1: {
-                fontSize: "1.2rem",
-            },
-            subtitle2: {
-                fontWeight: '400',
-                fontSize: "1.2rem",
+        }, typography: {
+            fontFamily: 'Montserrat, Arial', h2: {
+                lineHeight: 1, fontWeight: '500', fontSize: "3rem",
+            }, h3: {
+                lineHeight: 1, fontWeight: '500', fontSize: "3rem",
+            }, h4: {
+                lineHeight: 1, fontWeight: '500', fontSize: "2rem",
+            }, subtitle1: {
+                fontSize: "1rem",
+            }, subtitle2: {
+                fontWeight: '400', fontSize: "1.2rem",
             }
         }
     });
-    return (
-        <ThemeProvider theme={theme}>
-            <CssBaseline/>
-            <Home/>
-        </ThemeProvider>
-    );
+    return (<ThemeProvider theme={theme}>
+        <CssBaseline/>
+        <Home/>
+    </ThemeProvider>);
 }
 
 export default App;
