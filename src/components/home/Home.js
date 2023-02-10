@@ -275,7 +275,7 @@ export function Home() {
     return (<>{maintenanceMessage && maintenanceAlert}
             {rateAlertSnack}
             {errorAlertSnack}
-            <Grid container spacing={0}>
+            <Grid container spacing={0} id="main-container">
                 <Grid item md={12} bgcolor={theme.palette.secondary.dark}>
                     <Container maxWidth="md">
                         <Grid container direction="row" alignItems="center">
@@ -286,9 +286,9 @@ export function Home() {
                                     sx={{
                                         fontWeight: "bold",
                                         margin: {
-                                            md: 1, xs: 1
+                                            md: 0.5, xs: 1
                                         }, fontSize: {
-                                            md: "30px", sm: "32px", xs: "20px"
+                                            md: "26px", sm: "32px", xs: "20px"
                                         }, color: theme.palette.secondary.contrastText
                                     }}>
                                     <FormattedMessage
@@ -305,7 +305,7 @@ export function Home() {
                             <Grid item md={4} sm={4} xs={9}>
                                 <Typography variant="h2"
                                             sx={{
-                                                fontSize: {md: "20px", sm: "20px", xs: "16px"},
+                                                fontSize: {md: "18px", sm: "18px", xs: "16px"},
                                                 color: theme.palette.secondary.contrastText
                                             }}>
                                     <FormattedMessage
