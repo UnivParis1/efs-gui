@@ -23,10 +23,12 @@ const InformationPanel = () => {
                         id={`form.info.panel.title${i}`}/></Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <Typography variant="body1"><FormattedMessage id={`form.info.panel.desc${i}`}/><Link target="_blank"
-                                                                                                         rel="noreferrer"
-                                                                                                         href="https://www.pantheonsorbonne.fr/espace-presse">
-                        <LaunchTwoToneIcon sx={{verticalAlign: "text-bottom"}} fontSize="small"/></Link></Typography>
+                    <Typography variant="body1"><FormattedMessage id={`form.info.panel.desc${i}`}/>{(i === 7) &&
+                        <Link target="_blank"
+                              rel="noreferrer"
+                              href="https://www.pantheonsorbonne.fr/espace-presse">
+                            <LaunchTwoToneIcon sx={{verticalAlign: "text-bottom"}}
+                                               fontSize="small"/></Link>}</Typography>
 
                 </AccordionDetails>
             </Accordion>
