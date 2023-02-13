@@ -275,7 +275,7 @@ export function Home() {
     return (<>{maintenanceMessage && maintenanceAlert}
             {rateAlertSnack}
             {errorAlertSnack}
-            <Grid container spacing={0} id="main-container">
+            <Grid container spacing={0} sx={{marginBottom: theme.spacing(8)}} id="main-container">
                 <Grid item md={12} bgcolor={theme.palette.secondary.dark}>
                     <Container maxWidth="md">
                         <Grid container direction="row" alignItems="center">
