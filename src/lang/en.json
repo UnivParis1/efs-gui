@@ -46,9 +46,9 @@
     "form.help.clear.textbox": "Delete text",
     "form.help.search.button": "Search",
     "form.info.panel.title6": "Why is this tool in beta version?",
-    "form.info.panel.desc6": "This is a first version of our expertise search system. We continue to work to improve the coverage of publications from the Paris 1 Panthéon-Sorbonne scientific community in the HAL open archives, which is the basis of this system. We are also refining the algorithms that calculate the distance between the work of a researcher and the subject searched.",
-    "form.info.panel.title7": " You are a journalist, you wish to contact a teacher-researcher?",
-    "form.info.panel.desc7": " Please contact the press service of Paris 1 Panthéon-Sorbonne. You will find the contact information in the press area of the university website.",
+    "form.info.panel.desc6": "This is a first version of our Expert Finder System. We continue to work to improve HAL open archives' coverage of publications from the Paris 1 Panthéon-Sorbonne scientific community, upon which our system is based. We also refine the algorithms that calculate the distance between our researchers' work and your prompt.",
+    "form.info.panel.title7": "You are a journalist and you wish to get in contact with a scholar from Paris 1 Panthéon-Sorbonne?",
+    "form.info.panel.desc7": "Please contact the press service of Paris 1 Panthéon-Sorbonne. You will find the contact information in the press area of the university website.",
     "form.tooltip.aria.label.prefix": "Information on : ",
     "form.tooltip.precision.aria.label": "Information about the extension setting."
 }
