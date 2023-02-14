@@ -40,7 +40,7 @@ function App({shadowRootElement}) {
             },
         }, palette: {
             type: 'light', primary: {
-                main: '#c89110', light: '#f6f1ee', dark: '#999897', contrastText: '#ffffff',
+                main: '#c89110', light: '#f6f1ee', dark: '#899DC5', contrastText: '#ffffff',
             }, secondary: {
                 main: '#619afc', light: '#99caff', dark: '#00326e', contrastText: '#ffffff',
             }, info: {

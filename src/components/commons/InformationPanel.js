@@ -14,7 +14,7 @@ const InformationPanel = () => {
         {[1, 2, 3, 4, 5, 6, 7].map((i) => {
             return <Accordion key={`information-panel-section${i}`}>
                 <AccordionSummary
-                    sx={{backgroundColor: i === 7 ? theme.palette.secondary.light : null}}
+                    sx={{backgroundColor: i === 7 ? theme.palette.primary.dark : null}}
                     expandIcon={<ExpandMoreIcon/>}
                     aria-controls={`form.info.panel${i}-content`}
                     id={`form.info.panel${i}-header`}
