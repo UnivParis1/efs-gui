@@ -241,10 +241,10 @@ export function Home() {
     }, [filteredResult, sentencePanel, selectedAuthor, wordClickList])
 
     const captcha = useMemo(() => {
-            return <Grid item md={4} xs={12} mt={{md: 3, xs: 1}} justifyContent={{xs: "center"}}>
+            return <Grid item md={4} xs={12} mt={{md: 3, xs: 1}} justifyContent={{xs: "center"}} id="captcha-container">
                 <Card sx={{maxWidth: {md: 245}}}>
-                    < CardMedia
-                        sx={{height: 110}}
+                    <CardMedia
+                        sx={{height: {xs: "7rem", sm: "10rem", md: "7rem"}, width: {xs: "17.5rem", sm: "25rem", md: "17.5rem"}, marginX: "auto"}}
                         image={`${process.env.REACT_APP_API_URL}/captcha?salt=${captchaSalt}`}
                         title="green iguana"
                     />
@@ -258,8 +258,18 @@ export function Home() {
                             handleOutputString={setCaptchaCode}
                             inputProps={
                                 {
-                                    className: "1fa-box",
-                                    style: {"color": "orange", width: "40px"},
+                                    className: "fa-box",
+                                    style: {
+                                        "color": "orange",
+                                        justifyContent: "space-between",
+                                        width: "40px",
+                                        height: "45px",
+                                        margin: "5px",
+                                        borderRadius: "5px",
+                                        textAlign: "center",
+                                        fontSize: "34px",
+                                        fontFamily: "-apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial sans-serif",
+                                    },
                                     placeholder: "_"
                                 }}
                         />
@@ -275,7 +285,7 @@ export function Home() {
     return (<>{maintenanceMessage && maintenanceAlert}
             {rateAlertSnack}
             {errorAlertSnack}
-            <Grid container spacing={0} id="main-container">
+            <Grid container spacing={0} sx={{marginBottom: theme.spacing(8)}} id="main-container">
                 <Grid item md={12} bgcolor={theme.palette.secondary.dark}>
                     <Container maxWidth="md">
                         <Grid container direction="row" alignItems="center">
@@ -317,7 +327,7 @@ export function Home() {
                     </Container>
                 </Grid>
                 <Grid item md={12} bgcolor={theme.palette.primary.light} pt={theme.spacing(2)}>
-                    <Container maxWidth="md">
+                    <Container maxWidth="lg">
                         <Stack direction="column">
                             <Grid container direction="row">
                                 <Grid item md={8} xs={12} sx={{mb: {xs: 2}}}>
@@ -459,11 +469,12 @@ export function Home() {
                                     size="small"
                                     startIcon={<MdOutlineSearch/>}
                                     variant="contained"><FormattedMessage id="form.help.search.button"/></LoadingButton></Grid>
-                                <Grid item md={4} xs={12}><Stack direction="row" alignItems="center"
-                                                                 justifyContent="center"
+                                <Grid item md={6} xs={12}><Stack direction="row" alignItems="center"
+                                                                 justifyContent={{md: "end", xs: "center"}}
                                                                  spacing={1}>
                                     <HelpTooltip msgKey={"exclude-coauthors"}/>
                                     <IconButton onClick={() => setIncludeCoAuthors(false)}
+                                                sx={{marginLeft: "0 !important", paddingLeft: 0}}
                                                 aria-label={intl.formatMessage({id: "form.tooltip.exclude-coauthors.title"})}>
                                         {!includeCoAuthors && <BsPersonFill fontSize="28px"/>}
                                         {includeCoAuthors && <BsPerson fontSize="28px"/>}
@@ -472,6 +483,7 @@ export function Home() {
                                                   inputProps={{'aria-label': 'Limit to Paris 1 Pantheon-Sorbonne authors'}}
                                                   onChange={() => setIncludeCoAuthors(!includeCoAuthors)}/>
                                     <IconButton onClick={() => setIncludeCoAuthors(true)}
+                                                sx={{marginRight: "0 !important", paddingRight: 0}}
                                                 aria-label={intl.formatMessage({id: "form.tooltip.include-coauthors.title"})}>
                                         {includeCoAuthors && <BsPeopleFill fontSize="28px"/>}
                                         {!includeCoAuthors && <BsPeople fontSize="28px"/>}
@@ -484,7 +496,7 @@ export function Home() {
                         </Stack>
                     </Container>
                 </Grid>
-                <Container maxWidth="md">
+                <Container maxWidth="lg">
                     <Grid container direction="column">
                         {!noResultsAlert && !displayInfoPanel &&
                             <Grid item md={12} sx={{mt: 2}}><Stack direction="row" alignItems="center"
