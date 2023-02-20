@@ -253,6 +253,7 @@ export function Home() {
                             <FormattedMessage id="form.help.captcha"/>
                         </Typography>
                         <RICIBs
+                            key={captchaSalt}
                             amount={CODE_LENGTH}
                             inputRegExp={/^[A-Za-z0-9]$/}
                             handleOutputString={setCaptchaCode}
