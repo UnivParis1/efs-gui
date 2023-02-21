@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useMemo, useState} from 'react';
 import {
     Alert,
     AlertTitle,
@@ -38,6 +38,7 @@ import HelpTooltip, {HtmlTooltip} from "../commons/HelpTooltip";
 import {MdClear, MdCloud, MdOutlineCloud, MdOutlineList, MdOutlineSearch, MdOutlineViewList} from "react-icons/md";
 import ResultsList from "../commons/ResultsList";
 import InformationPanel from "../commons/InformationPanel";
+import {Context} from "../commons/IntlWrapper";
 
 const COLORS = ["c89108", "927b4b", "6b6760", "46546C", "00326e", "e55302", "9f5740", "765458", "394a59", "00326e"];
 
@@ -48,6 +49,7 @@ const MAX_SENTENCE_LENGTH = 400;
 
 export function Home() {
     const intl = useIntl();
+    const context = useContext(Context);
     const theme = useTheme();
     const large = useMediaQuery((theme) => theme.breakpoints.up('sm'));
     const [sentence, setSentence] = useState('');
@@ -157,8 +159,8 @@ export function Home() {
 
 
     const sentencePanel = useMemo(() => {
-        return publications ? <PublicationsAccordions publications={publications} preferredLanguage={'fr'}/> : ""
-    }, [publications])
+        return publications ? <PublicationsAccordions publications={publications} preferredLanguage={context.locale}/> : ""
+    }, [publications, context.locale])
 
     const wordClickList = useCallback(word => {
         if (selectedAuthor === word.identifier) {
