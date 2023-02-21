@@ -47,8 +47,8 @@
     "form.help.search.button": "Rechercher",
     "form.info.panel.title6": "Pourquoi cet outil est en version bêta ?",
     "form.info.panel.desc6": "Il s'agit d'une première version de notre système de recherche d'expertise. Nous continuons de travailler pour améliorer la couverture des publications de la communauté scientifique Paris 1 Panthéon-Sorbonne dans les archives ouvertes HAL, à la base de ce système. Nous affinons également les algorithmes qui calculent la distance entre les travaux d'une chercheuse ou d'un chercheur et le sujet recherché.",
-    "form.info.panel.title7": " Vous êtes journaliste, vous souhaitez contacter un enseignant-chercheur ?",
-    "form.info.panel.desc7": " Merci de contacter le service presse de Paris 1 Panthéon-Sorbonne dont vous trouverez les coordonnées dans l'espace presse du site internet de l'université.",
+    "form.info.panel.title7": "Vous êtes journaliste, vous souhaitez contacter un enseignant-chercheur de l'Université Paris 1 Panthéon-Sorbonne ?",
+    "form.info.panel.desc7": "Merci de contacter le service presse de Paris 1 Panthéon-Sorbonne dont vous trouverez les coordonnées dans l'espace presse du site internet de l'université.",
     "form.tooltip.aria.label.prefix": "Information sur : ",
     "form.tooltip.precision.aria.label": "Informations sur le reglage de l'extension."
 }

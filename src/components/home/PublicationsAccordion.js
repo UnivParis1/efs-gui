@@ -58,7 +58,7 @@ export default function PublicationsAccordions({publications, preferredLanguage}
         const otherLanguage = preferredLanguage === 'fr' ? 'en' : 'fr';
         const preferredFieldName = `${preferredLanguage}_${field}`;
         const otherFieldName = `${otherLanguage}_${field}`;
-        return isStringBlank(object[preferredFieldName]) ? object[otherFieldName] : object[preferredFieldName];
+        return isStringBlank(object[preferredFieldName] || "") ? object[otherFieldName] : object[preferredFieldName];
     }, [])
 
     return <div>
