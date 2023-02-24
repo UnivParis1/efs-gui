@@ -75,6 +75,7 @@ export function Home() {
     const [captchaSalt, setCaptchaSalt] = React.useState(Math.random());
     const [captchaCode, setCaptchaCode] = React.useState('');
     const [offlineApp, setOfflineApp] = React.useState(false);
+    const [heavyLoadAlert, setHeavyLoadAlert] = React.useState(false);
 
     const randomColor = useCallback(() => COLORS[Math.floor(Math.random() * COLORS.length)], [])
 
@@ -118,6 +119,8 @@ export function Home() {
                 const errorData = error.toJSON();
                 if (errorData.status === 429) {
                     setRateLimitAlert(true);
+                } else if (errorData.status === 503) {
+                    setHeavyLoadAlert(true);
                 } else if (errorData.status === 422) {
                     setErrorAlert(true);
                     setErrorMessage("form.error.captcha")
@@ -202,30 +205,48 @@ export function Home() {
         />
     }, [filteredResult, callbacks])
 
-    const handleClose = useCallback(() => {
+    const handleCloseRateLimitAlert = useCallback(() => {
         setRateLimitAlert(false);
         setErrorAlert(false);
     }, []);
 
+    const handleCloseHeavyLoadAlert = useCallback(() => {
+        setHeavyLoadAlert(false);
+        setErrorAlert(false);
+    }, []);
+
     const rateAlertSnack = useMemo(() => {
-        return <Snackbar open={rateLimitAlert} autoHideDuration={2000} onClose={handleClose} anchorOrigin={{
-            vertical: 'top', horizontal: 'center',
-        }}>
-            <Alert onClose={handleClose} severity="warning" variant="filled" sx={{width: '100%'}}>
+        return <Snackbar open={rateLimitAlert} autoHideDuration={2000} onClose={handleCloseRateLimitAlert}
+                         anchorOrigin={{
+                             vertical: 'top', horizontal: 'center',
+                         }}>
+            <Alert onClose={handleCloseRateLimitAlert} severity="warning" variant="filled" sx={{width: '100%'}}>
                 <FormattedMessage id="form.error.rate_limit"/>
             </Alert>
         </Snackbar>
-    }, [rateLimitAlert, handleClose])
+    }, [rateLimitAlert, handleCloseRateLimitAlert])
+
+    const loadAlertSnack = useMemo(() => {
+        return <Snackbar open={heavyLoadAlert} autoHideDuration={10000} onClose={handleCloseHeavyLoadAlert}
+                         anchorOrigin={{
+                             vertical: 'top', horizontal: 'center',
+                         }}>
+            <Alert onClose={handleCloseHeavyLoadAlert} severity="warning" variant="filled" sx={{width: '100%'}}>
+                <AlertTitle><FormattedMessage id="results.alert.excess-load.title"/></AlertTitle>
+                <FormattedMessage id="results.alert.excess-load.text"/>
+            </Alert>
+        </Snackbar>
+    }, [heavyLoadAlert, handleCloseHeavyLoadAlert])
 
     const errorAlertSnack = useMemo(() => {
-        return <Snackbar open={errorAlert} autoHideDuration={10000} onClose={handleClose} anchorOrigin={{
+        return <Snackbar open={errorAlert} autoHideDuration={10000} onClose={handleCloseRateLimitAlert} anchorOrigin={{
             vertical: 'top', horizontal: 'center',
         }}>
-            <Alert onClose={handleClose} severity="error" variant="filled" sx={{width: '100%'}}>
+            <Alert onClose={handleCloseRateLimitAlert} severity="error" variant="filled" sx={{width: '100%'}}>
                 <FormattedMessage id={errorMessage}/>
             </Alert>
         </Snackbar>
-    }, [errorAlert, errorMessage, handleClose])
+    }, [errorAlert, errorMessage, handleCloseRateLimitAlert])
 
     const maintenanceAlert = useMemo(() => {
         return <Alert severity="error" variant="filled" sx={{width: '100%', justifyContent: 'center', borderRadius: 0}}>
@@ -287,6 +308,7 @@ export function Home() {
 
     return (<>{maintenanceMessage && maintenanceAlert}
             {rateAlertSnack}
+            {loadAlertSnack}
             {errorAlertSnack}
             <Grid container spacing={0} sx={{marginBottom: theme.spacing(8)}} id="main-container">
                 <Grid item md={12} bgcolor={theme.palette.secondary.dark}>
