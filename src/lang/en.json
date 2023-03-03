@@ -42,6 +42,8 @@
     "form.tooltip.exclude-coauthors.description": "By choosing this option, the search results include only scholars from the University Paris 1 Panthéon-Sorbonne's research units.",
     "results.alert.no-results.title": "Your search did not return any results",
     "results.alert.no-results.text": "Check the case and spelling of your entry. You can also rephrase your topic, reduce the level of detail or expand your search to include co-authors.",
+    "results.alert.excess-load.title": "Many users are connected to the expert finder system at the moment",
+    "results.alert.excess-load.text": "We apologize for the inconvenience. If the waiting time is excessive, please try again later.",
     "home.offline.message": "The application is currently offline due to scheduled maintenance. We are working to restore the service as quickly as possible.",
     "form.help.clear.textbox": "Delete text",
     "form.help.search.button": "Search",
