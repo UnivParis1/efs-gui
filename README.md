@@ -1,70 +1,69 @@
-# Getting Started with Create React App
+# Outil de recherche d'expertise (_expert finder system_)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**Université Paris 1 Panthéon-Sorbonne**
 
-## Available Scripts
+L'outil de recherche d'expertise (EFS) est un POC (_proof of concept_) de moteur de recherche d'expertises en
+établissement ESR assisté par l'intelligence artificielle développé par l'Université Paris 1 Panthéon-Sorbonne.
+Il permet d'identifier des experts à partir d'
+une requête utilisateur en langage naturel sur la base de leurs publications.
+L'EFS est alimenté quotidiennement par les données de la plateforme HAL
+institutionnelle. Il utilise les modèles de langage S-BERT (paraphrase-multilingual-mpnet-base-v2) et GPT-3 (ADA) de
+l'API OpenAI pour calculer les similarités entre la requête utilisateur et les métadonnées des publications.
 
-In the project directory, you can run:
+L'interface utilisateur en React est intégrée comme un widget sur le site institutionnel de l'Université Paris 1
+Panthéon-Sorbonne : https://www.pantheonsorbonne.fr/recherche/outil-de-recherche-dexpertise/
 
-### `npm start`
+Pour plus d'informations,
+voir [cet article de l'observatoire de l'intelligence artificielle de Paris 1](https://observatoire-ia.pantheonsorbonne.fr/actualite/outil-recherche-dexpertise-base-lintelligence-artificielle-luniversite-paris-1-pantheon).
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+#### Avertissement
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Cette application est un POC ("proof of concept"). Ce n'est pas une application pérenne et elle n'a pas vocation à être
+maintenue. L'université Paris 1 panthéon Sorbonne travaille désormais sur un nouvel outil de recherche d'expertise,
+baptisé Idyia, dans le cadre de son projet de système d'information recherche mutualisé.
 
-### `npm test`
+La présente application comporte d'importantes limitations :
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- limitations fonctionnelles : la recherche d'experts s'effectue exclusivement à partir de métadonnées vectorisées (
+  recherche sémantique), à l'exclusion de toute recherche par mots-clés, ce qui rend difficile pour les chercheurs et
+  les chercheuses le contrôle de leurs modalités d'exposition.
+- limitations techniques : le code n'est pas sous _linting_ ni sous tests unitaires et la documentation est limitée
+- limitations du périmètre de données : seules les données HAL sont disponibles et les affiliations ne sont connues
+  qu'approximativement.
 
-### `npm run build`
+Néanmoins, cet outil de recherche d'expertise est suffisamment robuste et sécurisé pour un déploiement en production.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+#### Architecture
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+L'EFS est une application 3 tiers :
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+* **efs-computing**, le backend qui assure le chargement des données Hal, les calculs sous S-BERT et les échanges avec
+  l'API OpenAI
+    * Technologie : Python/PyTorch/Celery
+    * Repository : https://github.com/UnivParis1/efs-computing
+* **efs-api**, le back office node-express
+    * Technologie : Node - Express
+    * Repository : https://github.com/UnivParis1/efs-api
+* **efs-gui**, l'interface utilisateurs
+    * Technologie : React / Mui
+    * Repository : https://github.com/UnivParis1/efs-gui
 
-### `npm run eject`
+#### Licence
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Le code source de l'EFS est publié sous licence CECILL v2.1. Voir le fichier [LICENSE](LICENCE.md) pour plus de détails.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+#### Déploiement du front-end React
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Avertissement ! Des problèmes de dépendances existent entre le plugin react-wordcloud et la version de React.
+D'où la nécessité de compiler par :
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```
+npm install --legacy-peer-deps
+```
 
-## Learn More
+* À Paris 1 la version de node utilisée est 18.12.1
+* L'environnement est géré sous _dotenv_ (completer le fichier `.env.example` en retirant l'extension `.example`)
+* Le wording des interfaces est géré sous _react-intl_ (voir les textes dans `src/lang`). À Paris 1 les fichiers de
+  langues
+  sont générés sous poeditor.com.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
