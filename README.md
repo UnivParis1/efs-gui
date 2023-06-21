@@ -12,6 +12,7 @@ institutionnel. Il utilise les modèles de langage S-BERT (paraphrase-multilingu
 l'API OpenAI pour calculer les similarités entre les requêtes utilisateur et les métadonnées des publications.
 
 L'interface utilisateur est intégrée comme un widget sur le site institutionnel de l'Université Paris 1
+
 Panthéon-Sorbonne : https://recherche.pantheonsorbonne.fr/structures-recherche/rechercher-expertise
 
 Pour plus d'informations,
@@ -52,7 +53,7 @@ L'EFS est une application 3 tiers :
 
 #### Licence
 
-Le code source de l'EFS est publié sous licence CECILL v2.1. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+Le code source de l'EFS est publié sous licence CECILL v2.1. Voir le fichier [LICENSE](LICENCE.md) pour plus de détails.
 
 #### Déploiement du front-end React
 
@@ -66,4 +67,5 @@ exécuté avec succès sous node v18.12.1 (npm v8.19.2).
 
 * L'environnement est géré sous _dotenv_ (completer le fichier `.env.example` en retirant l'extension `.example`)
 * Le wording des interfaces est géré sous _react-intl_ (voir les textes dans `src/lang`). 
+
 
