@@ -3,14 +3,16 @@
 **Université Paris 1 Panthéon-Sorbonne**
 
 L'outil de recherche d'expertise (EFS) est un POC (_proof of concept_) de moteur de recherche d'expertises en
-établissement ESR assisté par l'intelligence artificielle développé par l'Université Paris 1 Panthéon-Sorbonne.
-Il permet d'identifier des experts à partir d'
-une requête utilisateur en langage naturel sur la base de leurs publications.
-L'EFS est alimenté quotidiennement par les données de la plateforme HAL
-institutionnelle. Il utilise les modèles de langage S-BERT (paraphrase-multilingual-mpnet-base-v2) et GPT-3 (ADA) de
-l'API OpenAI pour calculer les similarités entre la requête utilisateur et les métadonnées des publications.
+établissement ESR assisté par l'intelligence artificielle et basé sur les données Hal développé par l'Université Paris 1
+Panthéon-Sorbonne.
+Il permet d'identifier des experts sur la base de leurs publications à partir d'
+une requête utilisateur en langage naturel.
+L'EFS est alimenté quotidiennement par les données du portail HAL
+institutionnel. Il utilise les modèles de langage S-BERT (paraphrase-multilingual-mpnet-base-v2) et GPT-3 (ADA) de
+l'API OpenAI pour calculer les similarités entre les requêtes utilisateur et les métadonnées des publications.
 
-L'interface utilisateur en React est intégrée comme un widget sur le site institutionnel de l'Université Paris 1
+L'interface utilisateur est intégrée comme un widget sur le site institutionnel de l'Université Paris 1
+
 Panthéon-Sorbonne : https://recherche.pantheonsorbonne.fr/structures-recherche/rechercher-expertise
 
 Pour plus d'informations,
@@ -24,7 +26,8 @@ baptisé Idyia, dans le cadre de son projet de système d'information recherche 
 
 La présente application comporte d'importantes limitations :
 
-- limitations fonctionnelles : la recherche d'experts s'effectue exclusivement à partir de métadonnées vectorisées (
+- limitations fonctionnelles : la recherche d'experts s'effectue exclusivement à partir de métadonnées texte
+  vectorisées (
   recherche sémantique), à l'exclusion de toute recherche par mots-clés, ce qui rend difficile pour les chercheurs et
   les chercheuses le contrôle de leurs modalités d'exposition.
 - limitations techniques : le code n'est pas sous _linting_ ni sous tests unitaires et la documentation est limitée
@@ -55,15 +58,14 @@ Le code source de l'EFS est publié sous licence CECILL v2.1. Voir le fichier [L
 #### Déploiement du front-end React
 
 Avertissement ! Des problèmes de dépendances existent entre le plugin react-wordcloud et la version de React.
-D'où la nécessité de compiler par :
+D'où la nécessité d'installer les dépendances par :
 
 ```
 npm install --legacy-peer-deps
 ```
+exécuté avec succès sous node v18.12.1 (npm v8.19.2).
 
-* À Paris 1 la version de node utilisée est 18.12.1
 * L'environnement est géré sous _dotenv_ (completer le fichier `.env.example` en retirant l'extension `.example`)
-* Le wording des interfaces est géré sous _react-intl_ (voir les textes dans `src/lang`). À Paris 1 les fichiers de
-  langues
-  sont générés sous poeditor.com.
+* Le wording des interfaces est géré sous _react-intl_ (voir les textes dans `src/lang`). 
+
 
